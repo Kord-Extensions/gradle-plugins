@@ -13,8 +13,10 @@ import dev.kordex.gradle.plugins.kordex.resolvers.MavenMetadataResolver
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.*
 import org.slf4j.LoggerFactory
+import java.util.*
 
 class KordExPlugin : Plugin<Project> {
 	private val logger = LoggerFactory.getLogger("KordExPlugin")
@@ -107,8 +109,19 @@ class KordExPlugin : Plugin<Project> {
 						)
 					}
 				}
+
+				extension.modules.forEach { module ->
+					add(
+						"implementation",
+						"com.kotlindiscord.kord.extensions:$module:$kordExVersion"
+					) {
+						exclude("com.kotlindiscord.kord.extensions", "kord-extensions")
+					}
+				}
 			}
 		}
+
+		addGeneratedFiles(target, extension, kordVersion, kordExVersion)
 	}
 
 	private fun checkKotlinVersion(target: Project, extension: KordExExtension) {
@@ -150,5 +163,43 @@ class KordExPlugin : Plugin<Project> {
 		target.tasks
 			.getByName("check")
 			.finalizedBy(checkTask)
+	}
+
+	private fun addGeneratedFiles(
+		target: Project,
+		extension: KordExExtension,
+		kordVersion: String?,
+		kordExVersion: String
+	) {
+		val outputDir = target.layout.buildDirectory.file("/generated")
+		val outputFile = target.layout.buildDirectory.file("/generated/kordex.properties")
+
+		val task = target.tasks.create("generateMetadata") {
+			group = "generation"
+			description = "Generate KordEx metadata."
+
+			outputs.file(outputFile)
+
+			doLast {
+				val properties = Properties()
+
+				properties.setProperty("settings.dataCollection", extension.dataCollection.readable)
+				properties.setProperty("modules", extension.modules.joinToString())
+				properties.setProperty("versions.kordEx", kordExVersion)
+				properties.setProperty("versions.kord", kordVersion)
+
+				properties.store(outputFile.get().asFile.writer(), null)
+			}
+		}
+
+		val sourceSet = target
+			.extensions
+			.getByType(SourceSetContainer::class.java)
+			.first { it.name == "main" }
+
+		sourceSet.output.dir(
+			mapOf("builtBy" to task),
+			outputDir
+		)
 	}
 }
