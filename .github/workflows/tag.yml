@@ -58,7 +58,7 @@ jobs:
           TOKEN: "${{ secrets.TOKEN }}"
 
         with:
-          arguments: publish --no-parallel
+          arguments: publishPlugins
 
       - name: Create release description
         run: kotlin .github/tag.main.kts
