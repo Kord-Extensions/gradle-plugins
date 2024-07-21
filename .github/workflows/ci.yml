@@ -1,0 +1,44 @@
+name: CI (PRs/branches)
+
+on:
+  push:
+    branches-ignore:
+      - "root"
+
+  pull_request:
+  merge_group:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Set up Gradle properties
+        run: |
+          mkdir -p ~/.gradle
+          echo "org.gradle.jvmargs=-XX:MaxMetaspaceSize=5G" >> ~/.gradle/gradle.properties
+
+      - name: Gradle (Build)
+        uses: gradle/gradle-build-action@v3
+
+        with:
+          arguments: checkLicenses build
+
+        env:
+          TOKEN: "${{ secrets.TOKEN }}"
+
+      - name: Upload plugin JARs
+        uses: actions/upload-artifact@v4
+
+        with:
+          name: Plugin JARs
+          path: "*/build/libs/*.jar"

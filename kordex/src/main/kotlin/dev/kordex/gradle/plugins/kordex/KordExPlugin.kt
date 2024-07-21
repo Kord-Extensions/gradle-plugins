@@ -117,6 +117,34 @@ class KordExPlugin : Plugin<Project> {
 					) {
 						exclude("com.kotlindiscord.kord.extensions", "kord-extensions")
 					}
+
+					when (module) {
+						"adapter-mongodb" -> {
+							val mongoLatest = mavenResolver.getMetadata(
+								"$CENTRAL_BASE/org/mongodb/mongodb-driver-kotlin-coroutine/maven-metadata.xml"
+							).versioning.latest!!
+
+							add(
+								"implementation",
+								"org.mongodb:mongodb-driver-kotlin-coroutine:$mongoLatest"
+							)
+
+							add(
+								"implementation",
+								"org.mongodb:bson-kotlinx:$mongoLatest"
+							)
+						}
+
+						"extra-mappings" -> {
+							target.repositories {
+								maven("https://maven.fabricmc.net`")
+								maven("https://maven.quiltmc.org/repository/release")
+								maven("https://maven.quiltmc.org/repository/snapshot")
+								maven("https://maven.shedaniel.me")
+								maven("https://jitpack.io")
+							}
+						}
+					}
 				}
 			}
 		}

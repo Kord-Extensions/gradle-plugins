@@ -2,6 +2,7 @@ plugins {
 	id("dev.yumi.gradle.licenser")
 
 	java
+	signing
 
 	kotlin("jvm")
 	kotlin("plugin.serialization")
@@ -20,4 +21,13 @@ dependencies {
 
 license {
 	rule(rootProject.file("codeformat/HEADER"))
+}
+
+signing {
+	val signingKey: String? by project ?: return@signing
+	val signingPassword: String? by project ?: return@signing
+
+	useInMemoryPgpKeys(signingKey, signingPassword)
+
+//	sign(publishing.publications["maven"])
 }

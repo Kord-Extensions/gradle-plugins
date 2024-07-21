@@ -4,7 +4,8 @@ plugins {
 
     `java-gradle-plugin`
     `kotlin-dsl`
-    `maven-publish`
+
+    id("com.gradle.plugin-publish") version "1.2.1"
 }
 
 val ktorVersion = "2.3.12"
@@ -17,12 +18,11 @@ gradlePlugin {
     plugins {
         create("kordex") {
             description = "Gradle project plugin designed to make working with Kord Extensions simpler."
-
             displayName = "Kord Extensions"
+            tags = setOf("kordEx", "build", "kotlin", "api", "kord", "discord")
+
             id = "dev.kordex.gradle.kordex"
             implementationClass = "dev.kordex.gradle.plugins.kordex.KordExPlugin"
-
-            tags = setOf("kordex", "build", "kotlin", "api")
         }
     }
 }
