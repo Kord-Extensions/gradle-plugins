@@ -27,14 +27,21 @@ jobs:
           mkdir -p ~/.gradle
           echo "org.gradle.jvmargs=-XX:MaxMetaspaceSize=5G" >> ~/.gradle/gradle.properties
 
-      - name: Gradle (Build)
-        uses: gradle/gradle-build-action@v3
-
-        with:
-          arguments: checkLicenses build
+      - name: Gradle (Setup)
+        uses: gradle/actions/setup-gradle@v3
 
         env:
           TOKEN: "${{ secrets.TOKEN }}"
+
+      - name: Gradle (Build)
+        run: "./gradlew checkLicenses build"
+
+        env:
+          TOKEN: "${{ secrets.TOKEN }}"
+
+      - name: Gradle (Test)
+        run: "./gradlew build"
+        working-directory: "./testModule"
 
       - name: Upload plugin JARs
         uses: actions/upload-artifact@v4
