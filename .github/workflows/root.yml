@@ -43,13 +43,13 @@ jobs:
           dependency-graph: generate-and-submit
 
       - name: Gradle (Build)
-        run: "./gradlew checkLicenses build"
+        run: "./gradlew checkLicenses build publishToMavenLocal"
 
         env:
           TOKEN: "${{ secrets.TOKEN }}"
 
       - name: Gradle (Test)
-        run: "sudo ./gradlew build"
+        run: "./gradlew build"
         working-directory: "./testModule"
 
         env:

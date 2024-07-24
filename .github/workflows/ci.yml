@@ -34,7 +34,7 @@ jobs:
           TOKEN: "${{ secrets.TOKEN }}"
 
       - name: Gradle (Build)
-        run: "./gradlew checkLicenses build"
+        run: "./gradlew checkLicenses build publishToMavenLocal"
 
         env:
           TOKEN: "${{ secrets.TOKEN }}"
