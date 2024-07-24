@@ -9,6 +9,8 @@ package dev.kordex.gradle.plugins.kordex.extensions
 import dev.kordex.gradle.plugins.kordex.DataCollection
 
 open class KordExExtension {
+	var mainClass: String? = null
+
 	var addRepositories: Boolean = true
 	var dataCollection: DataCollection = DataCollection.Standard
 	var ignoreIncompatibleKotlinVersion: Boolean = false

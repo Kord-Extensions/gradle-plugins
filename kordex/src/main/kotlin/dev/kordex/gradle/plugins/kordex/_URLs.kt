@@ -27,3 +27,6 @@ fun kordReleasesUrl(path: String) =
 
 fun kordSnapshotUrl(path: String) =
 	"$KORD_SNAPSHOTS_BASE/$path"
+
+
+// https://s01.oss.sonatype.org/content/repositories/snapshots/com/kotlindiscord/kord/extensions/kord-extensions/1.9.0-SNAPSHOT/kord-extensions-$currentVersion.module

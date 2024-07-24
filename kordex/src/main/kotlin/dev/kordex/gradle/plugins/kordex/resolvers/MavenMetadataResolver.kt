@@ -24,9 +24,7 @@ class MavenMetadataResolver {
 	private val logger = LoggerFactory.getLogger("MavenMetadataResolver")
 
 	private val client = HttpClient {
-		install(ContentNegotiation) {
-
-		}
+		install(ContentNegotiation)
 	}
 
 	private val xml = XML {
@@ -35,10 +33,16 @@ class MavenMetadataResolver {
 		}
 	}
 
-	fun getMetadata(url: String): MavenMetadata = runBlocking {
-		val data = client.get(url).body<String>()
+	private val cache: MutableMap<String, MavenMetadata> = mutableMapOf()
+		@Synchronized get
 
-		MavenMetadata(xml.decodeFromString(data))
+
+	fun getMetadata(url: String): MavenMetadata = runBlocking {
+		cache.getOrPut(url) {
+			val data = client.get(url).body<String>()
+
+			MavenMetadata(xml.decodeFromString(data))
+		}
 	}
 
 	fun getKordExReleases() = getMetadata(kordExReleasesUrl("maven-metadata.xml"))
@@ -46,6 +50,10 @@ class MavenMetadataResolver {
 	fun getKordReleases() = getMetadata(kordReleasesUrl("maven-metadata.xml"))
 	fun getKordSnapshots() = getMetadata(kordSnapshotUrl("maven-metadata.xml"))
 
+	fun getKordExRelease(version: String) = getMetadata(kordExReleasesUrl("$version/maven-metadata.xml"))
+	fun getKordExSnapshot(version: String) = getMetadata(kordExSnapshotUrl("$version/maven-metadata.xml"))
+	fun getKordRelease(version: String) = getMetadata(kordReleasesUrl("$version/maven-metadata.xml"))
+	fun getKordSnapshot(version: String) = getMetadata(kordSnapshotUrl("$version/maven-metadata.xml"))
 
 	fun kordEx(version: String) =
 		if (version.endsWith("-SNAPSHOT")) {
@@ -60,9 +68,4 @@ class MavenMetadataResolver {
 		} else {
 			getKordRelease(version)
 		}
-
-	fun getKordExRelease(version: String) = getMetadata(kordExReleasesUrl("$version/maven-metadata.xml"))
-	fun getKordExSnapshot(version: String) = getMetadata(kordExSnapshotUrl("$version/maven-metadata.xml"))
-	fun getKordRelease(version: String) = getMetadata(kordReleasesUrl("$version/maven-metadata.xml"))
-	fun getKordSnapshot(version: String) = getMetadata(kordSnapshotUrl("$version/maven-metadata.xml"))
 }

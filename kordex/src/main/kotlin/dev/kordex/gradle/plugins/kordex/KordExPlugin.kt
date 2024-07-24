@@ -6,15 +6,24 @@
 
 package dev.kordex.gradle.plugins.kordex
 
-import com.jcabi.manifests.Manifests
 import dev.kordex.gradle.plugins.kordex.extensions.KordExExtension
 import dev.kordex.gradle.plugins.kordex.resolvers.GradleMetadataResolver
 import dev.kordex.gradle.plugins.kordex.resolvers.MavenMetadataResolver
+import dev.kordex.gradle.plugins.kordex.resolvers.gradle.GradleMetadata
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.GradleException
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ApplicationPlugin
+import org.gradle.api.plugins.JavaApplication
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -25,42 +34,38 @@ class KordExPlugin : Plugin<Project> {
 	private val gradleResolver = GradleMetadataResolver()
 	private val mavenResolver = MavenMetadataResolver()
 
+	private val kordReleases = mavenResolver.getKordReleases()
+	private val kordSnapshots = mavenResolver.getKordSnapshots()
+	private val kordExReleases = mavenResolver.getKordExReleases()
+	private val kordExSnapshots = mavenResolver.getKordExSnapshots()
+
+	private val latestKordVersion = maxOf(kordReleases, kordSnapshots) { left, right ->
+		left.versioning.lastUpdated.toLong().compareTo(right.versioning.lastUpdated.toLong())
+	}
+
+	private val latestKordExVersion = maxOf(kordExReleases, kordExSnapshots) { left, right ->
+		left.versioning.lastUpdated.toLong().compareTo(right.versioning.lastUpdated.toLong())
+	}
+
 	override fun apply(target: Project) {
 		val extension = target.extensions.create<KordExExtension>("kordEx")
+		val (kordExVersion, kordVersion, kordExGradle) = calculateVersions(extension)
 
-		checkKotlinVersion(target, extension)
+		target.afterEvaluate {
+			if (extension.mainClass != null) {
+				target.pluginManager.apply(ApplicationPlugin::class.java)
+			}
+
+			configureCompilerPlugins(target, extension, kordExGradle)
+		}
+
+		checkKotlinVersion(target, extension, kordExGradle)
 
 		addRepos(target, extension)
-		addDependencies(target, extension)
+		addDependencies(target, extension, kordExVersion, kordVersion)
 	}
 
-	private fun addRepos(target: Project, extension: KordExExtension) {
-		if (!extension.addRepositories) {
-			return
-		}
-
-		target.repositories {
-			mavenCentral()
-
-			maven(S01_BASE)
-			maven(OSS_BASE)
-		}
-	}
-
-	private fun addDependencies(target: Project, extension: KordExExtension) {
-		val kordReleases = mavenResolver.getKordReleases()
-		val kordSnapshots = mavenResolver.getKordSnapshots()
-		val kordExReleases = mavenResolver.getKordExReleases()
-		val kordExSnapshots = mavenResolver.getKordExSnapshots()
-
-		val latestKordVersion = maxOf(kordReleases, kordSnapshots) { left, right ->
-			left.versioning.lastUpdated.toLong().compareTo(right.versioning.lastUpdated.toLong())
-		}
-
-		val latestKordExVersion = maxOf(kordExReleases, kordExSnapshots) { left, right ->
-			left.versioning.lastUpdated.toLong().compareTo(right.versioning.lastUpdated.toLong())
-		}
-
+	private fun calculateVersions(extension: KordExExtension): Triple<String, String?, GradleMetadata> {
 		val kordExVersion = if (extension.kordExVersion == null || extension.kordExVersion == "latest") {
 			latestKordExVersion.versioning.latest
 				?: latestKordVersion.versioning.version
@@ -69,10 +74,10 @@ class KordExPlugin : Plugin<Project> {
 			extension.kordExVersion
 		}!!
 
+		val kordExGradle = gradleResolver.kordEx(kordExVersion)
+
 		val kordVersion = when (extension.kordVersion) {
 			null -> {
-				val kordExGradle = gradleResolver.kordEx(kordExVersion)
-
 				kordExGradle.variants
 					.first { it.name == "runtimeElements" }
 					.dependencies
@@ -87,6 +92,29 @@ class KordExPlugin : Plugin<Project> {
 			else -> extension.kordVersion
 		}
 
+		return Triple(kordExVersion, kordVersion, kordExGradle)
+	}
+
+	private fun addRepos(target: Project, extension: KordExExtension) {
+		if (!extension.addRepositories) {
+			return
+		}
+
+		target.repositories {
+			google()
+			mavenCentral()
+
+			maven(S01_BASE)
+			maven(OSS_BASE)
+		}
+	}
+
+	private fun addDependencies(
+		target: Project,
+		extension: KordExExtension,
+		kordExVersion: String,
+		kordVersion: String?
+	) {
 		target.afterEvaluate {
 			dependencies {
 				add(
@@ -152,13 +180,19 @@ class KordExPlugin : Plugin<Project> {
 		addGeneratedFiles(target, extension, kordVersion, kordExVersion)
 	}
 
-	private fun checkKotlinVersion(target: Project, extension: KordExExtension) {
+	private fun checkKotlinVersion(target: Project, extension: KordExExtension, kordExGradle: GradleMetadata) {
+		val wantedVersion = kordExGradle
+			.variants
+			.first { it.name == "runtimeElements" }
+			.dependencies
+			.first { it.group == "org.jetbrains.kotlin" && it.module.contains("-stdlib-", true) }
+			.version["requires"]!!
+
 		val checkTask = target.tasks.register("checkKotlinVersion") {
 			group = "verification"
 			description = "Check whether the correct Kotlin plugin version is in use."
 
 			doLast {
-				val wantedVersion = Manifests.read("Kotlin-Version")
 				val kotlinPlugin = target.pluginManager.findPlugin("org.jetbrains.kotlin.jvm")
 
 				if (kotlinPlugin == null) {
@@ -177,11 +211,13 @@ class KordExPlugin : Plugin<Project> {
 				if (!version.equals(wantedVersion, true)) {
 					if (extension.ignoreIncompatibleKotlinVersion) {
 						logger.warn(
-							"Incompatible Kotlin plugin version $version found - expected $wantedVersion"
+							"WARNING | Incompatible Kotlin plugin version $version found - Kord Extensions " +
+									"version ${kordExGradle.component.version} expects Kotlin version $wantedVersion"
 						)
 					} else {
 						throw GradleException(
-							"Incompatible Kotlin plugin version $version found - expected $wantedVersion"
+							"Incompatible Kotlin plugin version $version found - Kord Extensions version " +
+									"${kordExGradle.component.version} expects Kotlin version $wantedVersion"
 						)
 					}
 				}
@@ -191,6 +227,50 @@ class KordExPlugin : Plugin<Project> {
 		target.tasks
 			.getByName("check")
 			.finalizedBy(checkTask)
+	}
+
+	private fun configureCompilerPlugins(target: Project, extension: KordExExtension, kordExGradle: GradleMetadata) {
+		val versionElement = kordExGradle
+			.variants
+			.first { it.name == "apiElements" }
+			.attributes?.get("org.gradle.jvm.version")
+			?: kordExGradle
+				.variants
+				.first { it.name == "runtimeElements" }
+				.attributes?.get("org.gradle.jvm.version")
+
+		val javaVersion = versionElement?.jsonPrimitive?.int
+
+		target.tasks.withType<KotlinCompile> {
+			compilerOptions {
+				optIn.add("kotlin.RequiresOptIn")
+
+				if (javaVersion != null) {
+					jvmTarget.set(JvmTarget.fromTarget(javaVersion.toString()))
+				}
+			}
+		}
+
+		target.extensions.configure<JavaPluginExtension> {
+			if (javaVersion != null) {
+				sourceCompatibility = JavaVersion.toVersion(javaVersion.toString())
+				targetCompatibility = JavaVersion.toVersion(javaVersion.toString())
+			}
+		}
+
+		if (extension.mainClass != null) {
+			target.tasks.withType<Jar> {
+				manifest {
+					attributes(
+						"Main-Class" to extension.mainClass
+					)
+				}
+			}
+
+			target.extensions.configure<JavaApplication> {
+				mainClass.set(extension.mainClass)
+			}
+		}
 	}
 
 	private fun addGeneratedFiles(

@@ -1,9 +1,14 @@
 plugins {
     java
-    plugin
 
     `java-gradle-plugin`
     `kotlin-dsl`
+
+    plugin
+
+    if (System.getenv().contains("GITHUB_ACTIONS")) {
+        `signed-plugin`
+    }
 
     id("com.gradle.plugin-publish") version "1.2.1"
 }
@@ -44,14 +49,8 @@ dependencies {
     implementation("io.github.pdvrieze.xmlutil:core-jvm:0.86.3")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3")
-}
 
-tasks.withType<Jar> {
-    manifest {
-        attributes(
-            mapOf("Kotlin-Version" to kordExKotlinVersion)
-        )
-    }
+    compileOnly(kotlin("gradle-plugin", version = "2.0.20-Beta1"))
 }
 
 publishing {

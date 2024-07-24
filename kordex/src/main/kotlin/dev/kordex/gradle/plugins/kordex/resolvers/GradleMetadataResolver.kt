@@ -6,20 +6,16 @@
 
 package dev.kordex.gradle.plugins.kordex.resolvers
 
-import dev.kordex.gradle.plugins.kordex.*
+import dev.kordex.gradle.plugins.kordex.kordExReleasesUrl
+import dev.kordex.gradle.plugins.kordex.kordExSnapshotUrl
+import dev.kordex.gradle.plugins.kordex.kordReleasesUrl
+import dev.kordex.gradle.plugins.kordex.kordSnapshotUrl
 import dev.kordex.gradle.plugins.kordex.resolvers.gradle.GradleMetadata
-import dev.kordex.gradle.plugins.kordex.resolvers.maven.MavenMetadata
-import dev.kordex.gradle.plugins.kordex.resolvers.maven.XMLMavenMetadata
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
-import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
-import nl.adaptivity.xmlutil.serialization.XML
 import org.slf4j.LoggerFactory
 
 class GradleMetadataResolver {
@@ -29,10 +25,15 @@ class GradleMetadataResolver {
 	private val client = HttpClient()
 	private val json = Json
 
-	fun getMetadata(url: String): GradleMetadata = runBlocking {
-		val data = client.get(url).body<String>()
+	private val cache: MutableMap<String, GradleMetadata> = mutableMapOf()
+		@Synchronized get
 
-		json.decodeFromString(data)
+	fun getMetadata(url: String): GradleMetadata = runBlocking {
+		cache.getOrPut(url) {
+			val data = client.get(url).body<String>()
+
+			json.decodeFromString(data)
+		}
 	}
 
 	fun kordEx(version: String) =
