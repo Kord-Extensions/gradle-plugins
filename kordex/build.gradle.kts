@@ -6,7 +6,9 @@ plugins {
 
     plugin
 
-    if (System.getenv().contains("GITHUB_ACTIONS")) {
+    val env = System.getenv()
+
+    if (env.contains("GITHUB_ACTIONS") && !env.contains("NO_SIGNING")) {
         `signed-plugin`
     }
 

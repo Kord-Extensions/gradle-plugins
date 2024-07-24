@@ -30,13 +30,11 @@ jobs:
       - name: Gradle (Setup)
         uses: gradle/actions/setup-gradle@v3
 
-        env:
-          TOKEN: "${{ secrets.TOKEN }}"
-
       - name: Gradle (Build)
         run: "./gradlew checkLicenses build publishToMavenLocal"
 
         env:
+          NO_SIGNING: "true"
           TOKEN: "${{ secrets.TOKEN }}"
 
       - name: Gradle (Test)

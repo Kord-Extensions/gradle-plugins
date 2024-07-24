@@ -36,9 +36,6 @@ jobs:
       - name: Gradle (Setup)
         uses: gradle/actions/setup-gradle@v3
 
-        env:
-          TOKEN: "${{ secrets.TOKEN }}"
-
         with:
           dependency-graph: generate-and-submit
 
@@ -46,14 +43,12 @@ jobs:
         run: "./gradlew checkLicenses build publishToMavenLocal"
 
         env:
+          NO_SIGNING: "true"
           TOKEN: "${{ secrets.TOKEN }}"
 
       - name: Gradle (Test)
         run: "./gradlew build"
         working-directory: "./testModule"
-
-        env:
-          TOKEN: ${{ secrets.TOKEN }}
 
       - name: Upload plugin JARs
         uses: actions/upload-artifact@v4
