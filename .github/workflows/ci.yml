@@ -38,7 +38,7 @@ jobs:
           TOKEN: "${{ secrets.TOKEN }}"
 
       - name: Gradle (Test)
-        run: "./gradlew build"
+        run: "./gradlew build --info --stacktrace"
         working-directory: "./testModule"
 
       - name: Upload plugin JARs

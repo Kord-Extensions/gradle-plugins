@@ -279,12 +279,8 @@ class KordExPlugin : Plugin<Project> {
 		kordVersion: String?,
 		kordExVersion: String
 	) {
-		val outputDir = target.layout.buildDirectory.file("/generated")
-		val outputFile = target.layout.buildDirectory.file("/generated/kordex.properties")
-
-		if (!outputDir.get().asFile.exists()) {
-			outputDir.get().asFile.mkdirs()
-		}
+		val outputDir = target.layout.buildDirectory.dir("generated")
+		val outputFile = target.layout.buildDirectory.file("generated/kordex.properties")
 
 		val task = target.tasks.create("generateMetadata") {
 			group = "generation"
