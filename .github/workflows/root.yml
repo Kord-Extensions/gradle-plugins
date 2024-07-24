@@ -10,7 +10,7 @@ permissions:
   id-token: write
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,12 +33,24 @@ jobs:
           echo "githubToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.gradle/gradle.properties
           echo -e "\norg.gradle.jvmargs=-XX:MaxMetaspaceSize=5G" >> ~/.gradle/gradle.properties
 
-      - name: Gradle (Build)
-        uses: gradle/gradle-build-action@v3
+      - name: Gradle (Setup)
+        uses: gradle/actions/setup-gradle@v3
+
+        env:
+          TOKEN: "${{ secrets.TOKEN }}"
 
         with:
-          arguments: checkLicenses build
           dependency-graph: generate-and-submit
+
+      - name: Gradle (Build)
+        run: "./gradlew checkLicenses build"
+
+        env:
+          TOKEN: "${{ secrets.TOKEN }}"
+
+      - name: Gradle (Test)
+        run: "./gradlew build"
+        working-directory: "./testModule"
 
         env:
           TOKEN: ${{ secrets.TOKEN }}
