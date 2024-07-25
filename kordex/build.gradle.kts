@@ -61,7 +61,7 @@ dependencies {
 
     implementation("io.github.pdvrieze.xmlutil:core-jvm:0.86.3")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.7.1")
 
     implementation("com.unascribed:flexver-java:1.0.2")
 
