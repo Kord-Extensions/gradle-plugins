@@ -104,6 +104,9 @@ class KordExPlugin : Plugin<Project> {
 			google()
 			mavenCentral()
 
+			maven(KORDEX_RELEASES)
+			maven(KORDEX_SNAPSHOTS)
+
 			maven(S01_BASE)
 			maven(OSS_BASE)
 		}

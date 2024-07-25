@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     java
 
@@ -13,10 +15,19 @@ plugins {
     }
 
     id("com.gradle.plugin-publish") version "1.2.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 val ktorVersion = "2.3.12"
 val kordExKotlinVersion: String by properties
+
+repositories {
+    maven("https://repo.sleeping.town") {
+        content {
+            includeGroup("com.unascribed")
+        }
+    }
+}
 
 gradlePlugin {
     website = "https://kordex.dev"
@@ -33,6 +44,8 @@ gradlePlugin {
         }
     }
 }
+
+val include = configurations.create("include")
 
 val targetAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java)
 
@@ -52,7 +65,15 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3")
 
+    implementation("com.unascribed:flexver-java:1.0.2")
+    include("com.unascribed:flexver-java:1.0.2")
+
     compileOnly(kotlin("gradle-plugin", version = "2.0.20-Beta1"))
+}
+
+tasks.withType<ShadowJar> {
+    archiveClassifier = ""
+    configurations = listOf(include)
 }
 
 publishing {
