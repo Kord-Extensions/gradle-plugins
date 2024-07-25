@@ -45,8 +45,6 @@ gradlePlugin {
     }
 }
 
-val include = configurations.create("include")
-
 val targetAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java)
 
 dependencies {
@@ -66,14 +64,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3")
 
     implementation("com.unascribed:flexver-java:1.0.2")
-    include("com.unascribed:flexver-java:1.0.2")
 
     compileOnly(kotlin("gradle-plugin", version = "2.0.20-Beta1"))
 }
 
 tasks.withType<ShadowJar> {
     archiveClassifier = ""
-    configurations = listOf(include)
 }
 
 publishing {
