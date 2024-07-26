@@ -35,7 +35,7 @@ Here's everything this plugin can do for you:
   - The version of Kord and KordEx you're using.
   - A list of first-party KordEx modules you're using.
 - Add the Maven repositories you'll need to work with Kord and KordEx:
-  - Google, Maven Central, OSSRH (`oss.sonatype.org` and `s01.oss.sonatype.org`).
+  - KordEx, Google, Maven Central, OSSRH (`oss.sonatype.org` and `s01.oss.sonatype.org`).
   - When using the `extra-mappings` module: FabricMC, QuiltMC, Shedaniel, JitPack.
 - Add the dependencies you'll need to work with Kord and KordEx:
   - The specified version of KordEx, or the latest version if not specified.
