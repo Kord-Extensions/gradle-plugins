@@ -6,10 +6,7 @@
 
 package dev.kordex.gradle.plugins.kordex.resolvers
 
-import dev.kordex.gradle.plugins.kordex.kordExReleasesUrl
-import dev.kordex.gradle.plugins.kordex.kordExSnapshotUrl
-import dev.kordex.gradle.plugins.kordex.kordReleasesUrl
-import dev.kordex.gradle.plugins.kordex.kordSnapshotUrl
+import dev.kordex.gradle.plugins.kordex.*
 import dev.kordex.gradle.plugins.kordex.resolvers.gradle.GradleMetadata
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -36,12 +33,18 @@ class GradleMetadataResolver {
 		}
 	}
 
+	fun kordEx(version: Version) =
+		kordEx(version.version)
+
 	fun kordEx(version: String) =
 		if (version.endsWith("-SNAPSHOT")) {
 			getKordExSnapshot(version)
 		} else {
 			getKordExRelease(version)
 		}
+
+	fun kord(version: Version) =
+		kord(version.version)
 
 	fun kord(version: String) =
 		if (version.endsWith("-SNAPSHOT")) {

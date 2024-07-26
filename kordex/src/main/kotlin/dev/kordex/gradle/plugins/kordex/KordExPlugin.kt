@@ -39,12 +39,12 @@ class KordExPlugin : Plugin<Project> {
 	private val kordExReleases = mavenResolver.getKordExReleases()
 	private val kordExSnapshots = mavenResolver.getKordExSnapshots()
 
-	private val latestKordVersion = maxOf(kordReleases, kordSnapshots) { left, right ->
-		left.versioning.lastUpdated.toLong().compareTo(right.versioning.lastUpdated.toLong())
+	private val latestKordMetadata = maxOf(kordReleases, kordSnapshots) { left, right ->
+		left.getCurrentVersion().compareTo(right.getCurrentVersion())
 	}
 
-	private val latestKordExVersion = maxOf(kordExReleases, kordExSnapshots) { left, right ->
-		left.versioning.lastUpdated.toLong().compareTo(right.versioning.lastUpdated.toLong())
+	private val latestKordExMetadata = maxOf(kordExReleases, kordExSnapshots) { left, right ->
+		left.getCurrentVersion().compareTo(right.getCurrentVersion())
 	}
 
 	override fun apply(target: Project) {
@@ -65,13 +65,11 @@ class KordExPlugin : Plugin<Project> {
 		addDependencies(target, extension, kordExVersion, kordVersion)
 	}
 
-	private fun calculateVersions(extension: KordExExtension): Triple<String, String?, GradleMetadata> {
+	private fun calculateVersions(extension: KordExExtension): Triple<Version, Version?, GradleMetadata> {
 		val kordExVersion = if (extension.kordExVersion == null || extension.kordExVersion == "latest") {
-			latestKordExVersion.versioning.latest
-				?: latestKordVersion.versioning.version
-				?: latestKordVersion.version
+			latestKordExMetadata.getCurrentVersion()
 		} else {
-			extension.kordExVersion
+			extension.kordExVersion?.let { Version(it) }
 		}!!
 
 		val kordExGradle = gradleResolver.kordEx(kordExVersion)
@@ -83,13 +81,12 @@ class KordExPlugin : Plugin<Project> {
 					.dependencies
 					.first { it.module == "kord-core-voice" }
 					.version["requires"]
+					?.let { Version(it) }
 			}
 
-			"latest" -> latestKordVersion.versioning.latest
-				?: latestKordVersion.versioning.version
-				?: latestKordVersion.version
+			"latest" -> latestKordMetadata.getCurrentVersion()
 
-			else -> extension.kordVersion
+			else -> extension.kordVersion?.let { Version(it) }
 		}
 
 		return Triple(kordExVersion, kordVersion, kordExGradle)
@@ -115,8 +112,8 @@ class KordExPlugin : Plugin<Project> {
 	private fun addDependencies(
 		target: Project,
 		extension: KordExExtension,
-		kordExVersion: String,
-		kordVersion: String?
+		kordExVersion: Version,
+		kordVersion: Version?
 	) {
 		target.afterEvaluate {
 			dependencies {
@@ -279,8 +276,8 @@ class KordExPlugin : Plugin<Project> {
 	private fun addGeneratedFiles(
 		target: Project,
 		extension: KordExExtension,
-		kordVersion: String?,
-		kordExVersion: String
+		kordVersion: Version?,
+		kordExVersion: Version
 	) {
 		val outputDir = target.layout.buildDirectory.dir("generated")
 		val outputFile = target.layout.buildDirectory.file("generated/kordex.properties")
@@ -296,8 +293,8 @@ class KordExPlugin : Plugin<Project> {
 
 				properties.setProperty("settings.dataCollection", extension.dataCollection.readable)
 				properties.setProperty("modules", extension.modules.joinToString())
-				properties.setProperty("versions.kordEx", kordExVersion)
-				properties.setProperty("versions.kord", kordVersion)
+				properties.setProperty("versions.kordEx", kordExVersion.version)
+				properties.setProperty("versions.kord", kordVersion?.version)
 
 				properties.store(outputFile.get().asFile.writer(), null)
 			}

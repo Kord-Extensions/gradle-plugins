@@ -8,6 +8,7 @@ package dev.kordex.gradle.plugins.kordex.resolvers.gradle
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
+import dev.kordex.gradle.plugins.kordex.Version as KXVersion
 
 @Serializable
 data class GradleMetadata(
@@ -23,7 +24,9 @@ data class GradleMetadata(
 		val module: String,
 		val version: String,
 		val attributes: Map<String, String> = mapOf()
-	)
+	) {
+		fun version(): KXVersion = KXVersion(version)
+	}
 
 	@Serializable
 	data class Variant(
