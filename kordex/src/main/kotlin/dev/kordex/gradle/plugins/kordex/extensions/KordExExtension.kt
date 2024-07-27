@@ -7,20 +7,23 @@
 package dev.kordex.gradle.plugins.kordex.extensions
 
 import dev.kordex.gradle.plugins.kordex.DataCollection
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.assign
 
-open class KordExExtension {
-	var mainClass: String? = null
+interface KordExExtension {
+	val mainClass: Property<String>
 
-	var addRepositories: Boolean = true
-	var dataCollection: DataCollection = DataCollection.Standard
-	var ignoreIncompatibleKotlinVersion: Boolean = false
+	val addRepositories: Property<Boolean>
+	val dataCollection: Property<DataCollection>
+	val ignoreIncompatibleKotlinVersion: Property<Boolean>
 
-	var voice: Boolean = true
+	val voice: Property<Boolean>
 
-	var kordVersion: String? = null
-	var kordExVersion: String? = null
+	val kordVersion: Property<String>
+	val kordExVersion: Property<String>
 
-	val modules: MutableList<String> = mutableListOf()
+	val modules: ListProperty<String>
 
 	fun dataCollection(level: DataCollection?) {
 		dataCollection = level ?: DataCollection.None
