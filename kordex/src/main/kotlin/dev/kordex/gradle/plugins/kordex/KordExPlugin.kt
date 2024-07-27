@@ -70,7 +70,7 @@ class KordExPlugin : Plugin<Project> {
 	}
 
 	private fun calculateVersions(extension: KordExExtension): Triple<Version, Version?, GradleMetadata> {
-		val kordExVersion = if (extension.kordExVersion.isPresent || extension.kordExVersion.get() == "latest") {
+		val kordExVersion = if (!extension.kordExVersion.isPresent || extension.kordExVersion.orNull == "latest") {
 			latestKordExMetadata.getCurrentVersion()
 		} else {
 			extension.kordExVersion.map(::Version).orNull
