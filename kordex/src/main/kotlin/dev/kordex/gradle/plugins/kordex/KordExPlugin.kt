@@ -295,7 +295,7 @@ class KordExPlugin : Plugin<Project> {
 			doLast {
 				val properties = Properties()
 
-				properties.setProperty("settings.dataCollection", extension.dataCollection.orNull?.readable)
+				properties.setProperty("settings.dataCollection", extension.dataCollection.orNull?.readable.toString())
 				properties.setProperty("modules", extension.modules.get().joinToString())
 				properties.setProperty("versions.kordEx", kordExVersion.version)
 				properties.setProperty("versions.kord", kordVersion?.version)
