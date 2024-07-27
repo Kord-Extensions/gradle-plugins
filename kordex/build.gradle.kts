@@ -1,13 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    java
-
-    `java-gradle-plugin`
     `kotlin-dsl`
-
     plugin
-
     val env = System.getenv()
 
     if (env.contains("GITHUB_ACTIONS") && !env.contains("NO_SIGNING")) {
@@ -15,12 +10,12 @@ plugins {
     }
 
     id("com.gradle.plugin-publish") version "1.2.1"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 val kordExKotlinVersion: String by properties
 
 repositories {
+    gradlePluginPortal()
     maven("https://repo.sleeping.town") {
         content {
             includeGroup("com.unascribed")
@@ -47,6 +42,9 @@ gradlePlugin {
 val targetAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java)
 
 dependencies {
+    shadow(gradleApi())
+    shadow(localGroovy())
+
     implementation("com.jcabi:jcabi-manifests:2.1.0")
 
     implementation(platform("io.ktor:ktor-bom:2.3.12"))
@@ -70,10 +68,4 @@ dependencies {
 
 tasks.withType<ShadowJar> {
     archiveClassifier = ""
-}
-
-publishing {
-    repositories {
-        mavenLocal()
-    }
 }

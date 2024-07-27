@@ -1,10 +1,8 @@
 plugins {
 	id("dev.yumi.gradle.licenser")
 
-	java
-
-	kotlin("jvm")
 	kotlin("plugin.serialization")
+	com.github.johnrengelman.shadow
 }
 
 repositories {
@@ -14,8 +12,8 @@ repositories {
 }
 
 dependencies {
-	implementation(gradleApi())
-	implementation(localGroovy())
+	shadow(gradleApi())
+	shadow(localGroovy())
 }
 
 license {
