@@ -18,7 +18,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-val ktorVersion = "2.3.12"
 val kordExKotlinVersion: String by properties
 
 repositories {
@@ -50,10 +49,11 @@ val targetAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", String:
 dependencies {
     implementation("com.jcabi:jcabi-manifests:2.1.0")
 
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
+    implementation(platform("io.ktor:ktor-bom:2.3.12"))
+    implementation("io.ktor:ktor-client-cio")
+    implementation("io.ktor:ktor-client-core")
+    implementation("io.ktor:ktor-client-content-negotiation")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 
     implementation("io.github.pdvrieze.xmlutil:serialization-jvm:0.86.3"){
         exclude("io.github.pdvrieze.xmlutil", "core")
