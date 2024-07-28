@@ -2,7 +2,7 @@ plugins {
 	id("dev.yumi.gradle.licenser")
 
 	kotlin("plugin.serialization")
-	com.github.johnrengelman.shadow
+	id("com.github.johnrengelman.shadow")
 }
 
 repositories {
@@ -19,4 +19,3 @@ dependencies {
 license {
 	rule(rootProject.file("codeformat/HEADER"))
 }
-

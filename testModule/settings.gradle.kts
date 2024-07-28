@@ -1,13 +1,20 @@
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+
+        mavenLocal()
+    }
+
+}
+
 buildscript {
-    pluginManagement {
-        repositories {
-            gradlePluginPortal()
-            maven("https://repo.sleeping.town") {
-                content {
-                    includeGroup("com.unascribed")
-                }
-            }
-        }
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+
+        mavenLocal()
     }
 }
-includeBuild("../")
