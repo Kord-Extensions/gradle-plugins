@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+@file:Suppress("StringLiteralDuplication")
+
 package dev.kordex.gradle.plugins.kordex.resolvers
 
 import dev.kordex.gradle.plugins.kordex.kordExReleasesUrl
@@ -21,6 +23,7 @@ import nl.adaptivity.xmlutil.serialization.XML
 import org.slf4j.LoggerFactory
 
 class MavenMetadataResolver {
+	@Suppress("UnusedPrivateProperty")  // For now...
 	private val logger = LoggerFactory.getLogger("MavenMetadataResolver")
 
 	private val client = HttpClient {
@@ -35,7 +38,6 @@ class MavenMetadataResolver {
 
 	private val cache: MutableMap<String, MavenMetadata> = mutableMapOf()
 		@Synchronized get
-
 
 	fun getMetadata(url: String): MavenMetadata = runBlocking {
 		cache.getOrPut(url) {

@@ -9,7 +9,6 @@ package dev.kordex.gradle.plugins.kordex.extensions
 import dev.kordex.gradle.plugins.kordex.DataCollection
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.kotlin.dsl.assign
 
 interface KordExExtension {
 	val mainClass: Property<String>
@@ -26,7 +25,7 @@ interface KordExExtension {
 	val modules: ListProperty<String>
 
 	fun dataCollection(level: DataCollection?) {
-		dataCollection = level ?: DataCollection.None
+		dataCollection.set(level ?: DataCollection.None)  // Makes linter happy.
 	}
 
 	fun module(module: String) {

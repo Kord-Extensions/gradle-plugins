@@ -10,9 +10,8 @@ const val CENTRAL_BASE = "https://repo1.maven.org/maven2"
 const val OSS_BASE = "https://oss.sonatype.org/content/repositories/snapshots"
 const val S01_BASE = "https://s01.oss.sonatype.org/content/repositories/snapshots"
 
-const val KORDEX_BASE = "https://repo.kordex.dev"
-const val KORDEX_RELEASES = "$KORDEX_BASE/releases"
-const val KORDEX_SNAPSHOTS = "$KORDEX_BASE/snapshots"
+const val KORDEX_RELEASES = "https://releases-repo.kordex.dev"
+const val KORDEX_SNAPSHOTS = "https://snapshots-repo.kordex.dev"
 
 const val KORDEX_RELEASES_BASE = "$KORDEX_RELEASES/com/kotlindiscord/kord/extensions/kord-extensions"
 const val KORDEX_SNAPSHOTS_BASE = "$KORDEX_SNAPSHOTS/com/kotlindiscord/kord/extensions/kord-extensions"
@@ -31,6 +30,3 @@ fun kordReleasesUrl(path: String) =
 
 fun kordSnapshotUrl(path: String) =
 	"$KORD_SNAPSHOTS_BASE/$path"
-
-
-// https://s01.oss.sonatype.org/content/repositories/snapshots/com/kotlindiscord/kord/extensions/kord-extensions/1.9.0-SNAPSHOT/kord-extensions-$currentVersion.module

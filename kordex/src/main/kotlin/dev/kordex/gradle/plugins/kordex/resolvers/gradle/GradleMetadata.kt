@@ -36,7 +36,7 @@ data class GradleMetadata(
 		val dependencies: List<Dependency>,
 		val files: List<File>,
 
-	) {
+		) {
 		@Serializable
 		data class Dependency(
 			val group: String,

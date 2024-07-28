@@ -8,13 +8,13 @@ package dev.kordex.gradle.plugins.kordex
 
 import com.unascribed.flexver.FlexVerComparator
 
-class Version(val version: String) {
+data class Version(val version: String) {
 	override fun toString(): String =
 		version
 }
 
 operator fun Version?.compareTo(other: Version?): Int {
-	if ((this == null) xor ( other == null)) {
+	if ((this == null) xor (other == null)) {
 		if (this == null) {
 			return -1
 		}
@@ -28,7 +28,7 @@ operator fun Version?.compareTo(other: Version?): Int {
 }
 
 operator fun String?.compareTo(other: Version?): Int {
-	if ((this == null) xor ( other == null)) {
+	if ((this == null) xor (other == null)) {
 		if (this == null) {
 			return -1
 		}
@@ -42,7 +42,7 @@ operator fun String?.compareTo(other: Version?): Int {
 }
 
 operator fun Version?.compareTo(other: String?): Int {
-	if ((this == null) xor ( other == null)) {
+	if ((this == null) xor (other == null)) {
 		if (this == null) {
 			return -1
 		}
