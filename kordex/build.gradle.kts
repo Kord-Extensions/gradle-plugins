@@ -1,13 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    java
-
-    `java-gradle-plugin`
     `kotlin-dsl`
-
     plugin
-
     val env = System.getenv()
 
     if (env.contains("GITHUB_ACTIONS") && !env.contains("NO_SIGNING")) {
@@ -15,13 +10,12 @@ plugins {
     }
 
     id("com.gradle.plugin-publish") version "1.2.1"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-val ktorVersion = "2.3.12"
 val kordExKotlinVersion: String by properties
 
 repositories {
+    gradlePluginPortal()
     maven("https://repo.sleeping.town") {
         content {
             includeGroup("com.unascribed")
@@ -48,12 +42,16 @@ gradlePlugin {
 val targetAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java)
 
 dependencies {
+    shadow(gradleApi())
+    shadow(localGroovy())
+
     implementation("com.jcabi:jcabi-manifests:2.1.0")
 
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
+    implementation(platform("io.ktor:ktor-bom:2.3.12"))
+    implementation("io.ktor:ktor-client-cio")
+    implementation("io.ktor:ktor-client-core")
+    implementation("io.ktor:ktor-client-content-negotiation")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 
     implementation("io.github.pdvrieze.xmlutil:serialization-jvm:0.86.3"){
         exclude("io.github.pdvrieze.xmlutil", "core")
@@ -70,10 +68,4 @@ dependencies {
 
 tasks.withType<ShadowJar> {
     archiveClassifier = ""
-}
-
-publishing {
-    repositories {
-        mavenLocal()
-    }
 }

@@ -10,10 +10,11 @@ repositories {
 }
 
 dependencies {
-	implementation(kotlin("gradle-plugin", version = "1.9.20"))
-	implementation(kotlin("serialization", version = "1.9.20"))
+	implementation(kotlin("gradle-plugin", version = "1.9.23"))
+	implementation(kotlin("serialization", version = "1.9.23"))
 
 	implementation("dev.yumi", "yumi-gradle-licenser", "1.2.0")
+	implementation("com.github.johnrengelman", "shadow", "8.1.1")
 
 	implementation(gradleApi())
 	implementation(localGroovy())
@@ -24,8 +25,4 @@ beforeEvaluate {
 
 	group = "dev.kordex.gradle"
 	version = projectVersion
-
-	kotlin {
-		jvmToolchain(17)
-	}
 }

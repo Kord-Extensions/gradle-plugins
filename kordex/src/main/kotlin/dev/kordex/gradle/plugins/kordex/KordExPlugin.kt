@@ -48,11 +48,15 @@ class KordExPlugin : Plugin<Project> {
 	}
 
 	override fun apply(target: Project) {
-		val extension = target.extensions.create<KordExExtension>("kordEx")
+		val extension = target.extensions.create<KordExExtension>("kordEx").apply {
+			addRepositories.convention(true)
+			ignoreIncompatibleKotlinVersion.convention(false)
+			voice.convention(true)
+		}
 		val (kordExVersion, kordVersion, kordExGradle) = calculateVersions(extension)
 
 		target.afterEvaluate {
-			if (extension.mainClass != null) {
+			if (extension.mainClass.isPresent) {
 				target.pluginManager.apply(ApplicationPlugin::class.java)
 			}
 
@@ -66,15 +70,15 @@ class KordExPlugin : Plugin<Project> {
 	}
 
 	private fun calculateVersions(extension: KordExExtension): Triple<Version, Version?, GradleMetadata> {
-		val kordExVersion = if (extension.kordExVersion == null || extension.kordExVersion == "latest") {
+		val kordExVersion = if (!extension.kordExVersion.isPresent || extension.kordExVersion.orNull == "latest") {
 			latestKordExMetadata.getCurrentVersion()
 		} else {
-			extension.kordExVersion?.let { Version(it) }
+			extension.kordExVersion.map(::Version).orNull
 		}!!
 
 		val kordExGradle = gradleResolver.kordEx(kordExVersion)
 
-		val kordVersion = when (extension.kordVersion) {
+		val kordVersion = when (extension.kordVersion.orNull) {
 			null -> {
 				kordExGradle.variants
 					.first { it.name == "runtimeElements" }
@@ -86,14 +90,14 @@ class KordExPlugin : Plugin<Project> {
 
 			"latest" -> latestKordMetadata.getCurrentVersion()
 
-			else -> extension.kordVersion?.let { Version(it) }
+			else -> extension.kordVersion.map(::Version).orNull
 		}
 
 		return Triple(kordExVersion, kordVersion, kordExGradle)
 	}
 
 	private fun addRepos(target: Project, extension: KordExExtension) {
-		if (!extension.addRepositories) {
+		if (!extension.addRepositories.get()) {
 			return
 		}
 
@@ -125,7 +129,7 @@ class KordExPlugin : Plugin<Project> {
 				}
 
 				if (kordVersion != null) {
-					if (extension.voice) {
+					if (extension.voice.get()) {
 						add(
 							"implementation",
 							"dev.kord:kord-core-voice:$kordVersion"
@@ -138,7 +142,7 @@ class KordExPlugin : Plugin<Project> {
 					}
 				}
 
-				extension.modules.forEach { module ->
+				extension.modules.get().forEach { module ->
 					add(
 						"implementation",
 						"com.kotlindiscord.kord.extensions:$module:$kordExVersion"
@@ -209,7 +213,7 @@ class KordExPlugin : Plugin<Project> {
 				val version = kotlinJarRegex.matchEntire(kotlinJarName)!!.groupValues[1]
 
 				if (!version.equals(wantedVersion, true)) {
-					if (extension.ignoreIncompatibleKotlinVersion) {
+					if (extension.ignoreIncompatibleKotlinVersion.get()) {
 						logger.warn(
 							"WARNING | Incompatible Kotlin plugin version $version found - Kord Extensions " +
 									"version ${kordExGradle.component.version} expects Kotlin version $wantedVersion"
@@ -258,7 +262,7 @@ class KordExPlugin : Plugin<Project> {
 			}
 		}
 
-		if (extension.mainClass != null) {
+		if (extension.mainClass.isPresent) {
 			target.tasks.withType<Jar> {
 				manifest {
 					attributes(
@@ -268,7 +272,7 @@ class KordExPlugin : Plugin<Project> {
 			}
 
 			target.extensions.configure<JavaApplication> {
-				mainClass.set(extension.mainClass)
+				mainClass = extension.mainClass
 			}
 		}
 	}
@@ -291,8 +295,8 @@ class KordExPlugin : Plugin<Project> {
 			doLast {
 				val properties = Properties()
 
-				properties.setProperty("settings.dataCollection", extension.dataCollection.readable)
-				properties.setProperty("modules", extension.modules.joinToString())
+				properties.setProperty("settings.dataCollection", extension.dataCollection.orNull?.readable.toString())
+				properties.setProperty("modules", extension.modules.get().joinToString())
 				properties.setProperty("versions.kordEx", kordExVersion.version)
 				properties.setProperty("versions.kord", kordVersion?.version)
 
