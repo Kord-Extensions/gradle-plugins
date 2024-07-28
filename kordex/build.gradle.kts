@@ -45,7 +45,10 @@ dependencies {
     shadow(gradleApi())
     shadow(localGroovy())
 
-    implementation("com.jcabi:jcabi-manifests:2.1.0")
+	compileOnly(kotlin("gradle-plugin", version = "2.0.20-Beta1"))
+
+	detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
+	detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-libraries:1.23.6")
 
     implementation(platform("io.ktor:ktor-bom:2.3.12"))
     implementation("io.ktor:ktor-client-cio")
@@ -53,17 +56,15 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 
-    implementation("io.github.pdvrieze.xmlutil:serialization-jvm:0.86.3"){
-        exclude("io.github.pdvrieze.xmlutil", "core")
-    }
-
+	implementation("com.jcabi:jcabi-manifests:2.1.0")
+	implementation("com.unascribed:flexver-java:1.0.2")
     implementation("io.github.pdvrieze.xmlutil:core-jvm:0.86.3")
-
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3")
 
-    implementation("com.unascribed:flexver-java:1.0.2")
+	implementation("io.github.pdvrieze.xmlutil:serialization-jvm:0.86.3"){
+		exclude("io.github.pdvrieze.xmlutil", "core")
+	}
 
-    compileOnly(kotlin("gradle-plugin", version = "2.0.20-Beta1"))
 }
 
 tasks.withType<ShadowJar> {

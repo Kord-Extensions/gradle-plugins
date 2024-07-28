@@ -6,7 +6,7 @@
 
 package dev.kordex.gradle.plugins.kordex
 
-sealed class DataCollection (val readable: String) {
+sealed class DataCollection(val readable: String) {
 	object None : DataCollection("none")
 	object Minimal : DataCollection("minimal")
 	object Standard : DataCollection("standard")

@@ -53,7 +53,7 @@ class MavenMetadata(private val xml: XMLMavenMetadata) {
 			val buildNumber: Long = xml.buildNumber.value
 		}
 
-		class SnapshotVersion(private val xml: XMLMavenMetadata.XmlSnapshotVersions.XmlSnapshotVersion) {
+		data class SnapshotVersion(private val xml: XMLMavenMetadata.XmlSnapshotVersions.XmlSnapshotVersion) {
 			val classifier: String? get() = xml.classifier?.value
 			val extension: String get() = xml.extension.value
 			val value: Version get() = Version(xml.value.value)

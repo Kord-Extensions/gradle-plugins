@@ -16,7 +16,9 @@ import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
 class GradleMetadataResolver {
+	@Suppress("UnusedPrivateProperty")  // For now...
 	private val logger = LoggerFactory.getLogger("GradleMetadataResolver")
+
 	private val mavenResolver = MavenMetadataResolver()
 
 	private val client = HttpClient()

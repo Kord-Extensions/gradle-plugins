@@ -1,8 +1,10 @@
 plugins {
+	id("com.github.johnrengelman.shadow")
 	id("dev.yumi.gradle.licenser")
 
+	id("io.gitlab.arturbosch.detekt")
+
 	kotlin("plugin.serialization")
-	id("com.github.johnrengelman.shadow")
 }
 
 repositories {
@@ -14,6 +16,13 @@ repositories {
 dependencies {
 	shadow(gradleApi())
 	shadow(localGroovy())
+}
+
+detekt {
+	buildUponDefaultConfig = true
+	config.from(rootProject.file("detekt.yml"))
+
+	autoCorrect = true
 }
 
 license {

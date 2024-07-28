@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+@file:Suppress("StringLiteralDuplication")
+
 package dev.kordex.gradle.plugins.kordex
 
 import dev.kordex.gradle.plugins.kordex.extensions.KordExExtension
@@ -28,7 +30,9 @@ import org.slf4j.LoggerFactory
 import java.util.*
 
 class KordExPlugin : Plugin<Project> {
+	@Suppress("UnusedPrivateProperty")  // For now...
 	private val logger = LoggerFactory.getLogger("KordExPlugin")
+
 	private val kotlinJarRegex = "kotlin-compiler-[a-z]+-(.+)\\.jar".toRegex()
 
 	private val gradleResolver = GradleMetadataResolver()
@@ -79,14 +83,13 @@ class KordExPlugin : Plugin<Project> {
 		val kordExGradle = gradleResolver.kordEx(kordExVersion)
 
 		val kordVersion = when (extension.kordVersion.orNull) {
-			null -> {
-				kordExGradle.variants
+			null ->
+			    kordExGradle.variants
 					.first { it.name == "runtimeElements" }
 					.dependencies
 					.first { it.module == "kord-core-voice" }
 					.version["requires"]
 					?.let { Version(it) }
-			}
 
 			"latest" -> latestKordMetadata.getCurrentVersion()
 
@@ -216,12 +219,12 @@ class KordExPlugin : Plugin<Project> {
 					if (extension.ignoreIncompatibleKotlinVersion.get()) {
 						logger.warn(
 							"WARNING | Incompatible Kotlin plugin version $version found - Kord Extensions " +
-									"version ${kordExGradle.component.version} expects Kotlin version $wantedVersion"
+								"version ${kordExGradle.component.version} expects Kotlin version $wantedVersion"
 						)
 					} else {
 						throw GradleException(
 							"Incompatible Kotlin plugin version $version found - Kord Extensions version " +
-									"${kordExGradle.component.version} expects Kotlin version $wantedVersion"
+								"${kordExGradle.component.version} expects Kotlin version $wantedVersion"
 						)
 					}
 				}
@@ -281,7 +284,7 @@ class KordExPlugin : Plugin<Project> {
 		target: Project,
 		extension: KordExExtension,
 		kordVersion: Version?,
-		kordExVersion: Version
+		kordExVersion: Version,
 	) {
 		val outputDir = target.layout.buildDirectory.dir("generated")
 		val outputFile = target.layout.buildDirectory.file("generated/kordex.properties")
@@ -295,7 +298,11 @@ class KordExPlugin : Plugin<Project> {
 			doLast {
 				val properties = Properties()
 
-				properties.setProperty("settings.dataCollection", extension.dataCollection.orNull?.readable.toString())
+				properties.setProperty(
+					"settings.dataCollection",
+					extension.dataCollection.orNull?.readable.toString()
+				)
+
 				properties.setProperty("modules", extension.modules.get().joinToString())
 				properties.setProperty("versions.kordEx", kordExVersion.version)
 				properties.setProperty("versions.kord", kordVersion?.version)
@@ -311,7 +318,8 @@ class KordExPlugin : Plugin<Project> {
 
 		sourceSet.output.dir(
 			mapOf("builtBy" to task),
-			outputDir
+
+			outputDir,
 		)
 	}
 }
