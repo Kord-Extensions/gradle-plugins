@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     `kotlin-dsl`
     plugin
@@ -16,11 +14,6 @@ val kordExKotlinVersion: String by properties
 
 repositories {
     gradlePluginPortal()
-    maven("https://repo.sleeping.town") {
-        content {
-            includeGroup("com.unascribed")
-        }
-    }
 }
 
 gradlePlugin {
@@ -39,12 +32,7 @@ gradlePlugin {
     }
 }
 
-val targetAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java)
-
 dependencies {
-    shadow(gradleApi())
-    shadow(localGroovy())
-
 	compileOnly(kotlin("gradle-plugin", version = "2.0.20-Beta1"))
 
 	detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
@@ -57,16 +45,10 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 
 	implementation("com.jcabi:jcabi-manifests:2.1.0")
-	implementation("com.unascribed:flexver-java:1.0.2")
     implementation("io.github.pdvrieze.xmlutil:core-jvm:0.86.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3")
 
 	implementation("io.github.pdvrieze.xmlutil:serialization-jvm:0.86.3"){
 		exclude("io.github.pdvrieze.xmlutil", "core")
 	}
-
-}
-
-tasks.withType<ShadowJar> {
-    archiveClassifier = ""
 }
