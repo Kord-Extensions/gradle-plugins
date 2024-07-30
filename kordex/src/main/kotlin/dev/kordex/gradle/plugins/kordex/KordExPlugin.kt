@@ -8,9 +8,9 @@
 
 package dev.kordex.gradle.plugins.kordex
 
-import dev.kordex.gradle.plugins.kordex.extensions.KordExExtension
+import dev.kordex.gradle.plugins.kordex.base.*
+import dev.kordex.gradle.plugins.kordex.plugins.KordExPluginSettings
 import dev.kordex.gradle.plugins.kordex.resolvers.GradleMetadataResolver
-import dev.kordex.gradle.plugins.kordex.resolvers.MavenMetadataResolver
 import dev.kordex.gradle.plugins.kordex.resolvers.gradle.GradleMetadata
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
@@ -19,6 +19,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPlugin
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSetContainer
@@ -35,28 +36,23 @@ class KordExPlugin : Plugin<Project> {
 
 	private val kotlinJarRegex = "kotlin-compiler-[a-z]+-(.+)\\.jar".toRegex()
 
-	private val gradleResolver = GradleMetadataResolver()
-	private val mavenResolver = MavenMetadataResolver()
-
-	private val kordReleases = mavenResolver.getKordReleases()
-	private val kordSnapshots = mavenResolver.getKordSnapshots()
-	private val kordExReleases = mavenResolver.getKordExReleases()
-	private val kordExSnapshots = mavenResolver.getKordExSnapshots()
-
-	private val latestKordMetadata = maxOf(kordReleases, kordSnapshots) { left, right ->
-		left.getCurrentVersion().compareTo(right.getCurrentVersion())
-	}
-
-	private val latestKordExMetadata = maxOf(kordExReleases, kordExSnapshots) { left, right ->
-		left.getCurrentVersion().compareTo(right.getCurrentVersion())
-	}
-
 	override fun apply(target: Project) {
 		val extension = target.extensions.create<KordExExtension>("kordEx").apply {
 			addRepositories.convention(true)
 			ignoreIncompatibleKotlinVersion.convention(false)
+			pluginMode.convention(false)
 			voice.convention(true)
 		}
+
+		@Suppress("UnusedPrivateProperty")  // TODO
+		val pluginExtension = if (extension.pluginMode.get()) {
+			(extension as ExtensionAware).extensions.create<KordExPluginSettings>("plugins").apply {
+				// TODO
+			}
+		} else {
+			null
+		}
+
 		val (kordExVersion, kordVersion, kordExGradle) = calculateVersions(extension)
 
 		target.afterEvaluate {
@@ -80,11 +76,11 @@ class KordExPlugin : Plugin<Project> {
 			extension.kordExVersion.map(::Version).orNull
 		}!!
 
-		val kordExGradle = gradleResolver.kordEx(kordExVersion)
+		val kordExGradle = GradleMetadataResolver.kordEx(kordExVersion)
 
 		val kordVersion = when (extension.kordVersion.orNull) {
 			null ->
-			    kordExGradle.variants
+				kordExGradle.variants
 					.first { it.name == "runtimeElements" }
 					.dependencies
 					.first { it.module == "kord-core-voice" }
@@ -104,15 +100,19 @@ class KordExPlugin : Plugin<Project> {
 			return
 		}
 
-		target.repositories {
-			google()
-			mavenCentral()
+		target.repo(KORDEX_RELEASES)
+		target.repo(KORDEX_SNAPSHOTS)
+		target.repo(S01_BASE)
+		target.repo(OSS_BASE)
 
-			maven(KORDEX_RELEASES)
-			maven(KORDEX_SNAPSHOTS)
+		val modules = extension.modules.get().normalizeModules()
 
-			maven(S01_BASE)
-			maven(OSS_BASE)
+		if ("extra-mappings" in modules) {
+			target.repo("https://maven.fabricmc.net`")
+			target.repo("https://maven.quiltmc.org/repository/release")
+			target.repo("https://maven.quiltmc.org/repository/snapshot")
+			target.repo("https://maven.shedaniel.me")
+			target.repo("https://jitpack.io")
 		}
 	}
 
@@ -122,64 +122,52 @@ class KordExPlugin : Plugin<Project> {
 		kordExVersion: Version,
 		kordVersion: Version?
 	) {
+		val configurations = if (extension.pluginMode.get()) {
+			arrayOf("compileOnly", "testImplementation")
+		} else {
+			arrayOf("implementation")
+		}
+
 		target.afterEvaluate {
-			dependencies {
-				add(
-					"implementation",
-					"com.kotlindiscord.kord.extensions:kord-extensions:$kordExVersion"
+			target.addDependency(
+				configurations,
+				"com.kotlindiscord.kord.extensions:kord-extensions:$kordExVersion"
+			) { exclude("dev.kord", "kord-core-voice") }
+
+			if (kordVersion != null) {
+				if (extension.voice.get()) {
+					target.addDependency(
+						configurations,
+						"dev.kord:kord-core-voice:$kordVersion"
+					)
+				} else {
+					target.addDependency(
+						configurations,
+						"dev.kord:kord-core:$kordVersion"
+					)
+				}
+			}
+
+			extension.modules.get().normalizeModules().forEach { module ->
+				target.addDependency(
+					configurations,
+					"com.kotlindiscord.kord.extensions:$module:$kordExVersion"
 				) {
-					exclude("dev.kord", "kord-core-voice")
+					exclude("com.kotlindiscord.kord.extensions", "kord-extensions")
 				}
 
-				if (kordVersion != null) {
-					if (extension.voice.get()) {
-						add(
-							"implementation",
-							"dev.kord:kord-core-voice:$kordVersion"
-						)
-					} else {
-						add(
-							"implementation",
-							"dev.kord:kord-core:$kordVersion"
-						)
-					}
-				}
+				if (module == "adapter-mongodb") {
+					val mongoLatest = latestMongoDBMetadata.versioning.latest!!
 
-				extension.modules.get().forEach { module ->
-					add(
-						"implementation",
-						"com.kotlindiscord.kord.extensions:$module:$kordExVersion"
-					) {
-						exclude("com.kotlindiscord.kord.extensions", "kord-extensions")
-					}
+					target.addDependency(
+						configurations,
+						"org.mongodb:mongodb-driver-kotlin-coroutine:$mongoLatest"
+					)
 
-					when (module) {
-						"adapter-mongodb" -> {
-							val mongoLatest = mavenResolver.getMetadata(
-								"$CENTRAL_BASE/org/mongodb/mongodb-driver-kotlin-coroutine/maven-metadata.xml"
-							).versioning.latest!!
-
-							add(
-								"implementation",
-								"org.mongodb:mongodb-driver-kotlin-coroutine:$mongoLatest"
-							)
-
-							add(
-								"implementation",
-								"org.mongodb:bson-kotlinx:$mongoLatest"
-							)
-						}
-
-						"extra-mappings" -> {
-							target.repositories {
-								maven("https://maven.fabricmc.net`")
-								maven("https://maven.quiltmc.org/repository/release")
-								maven("https://maven.quiltmc.org/repository/snapshot")
-								maven("https://maven.shedaniel.me")
-								maven("https://jitpack.io")
-							}
-						}
-					}
+					target.addDependency(
+						configurations,
+						"org.mongodb:bson-kotlinx:$mongoLatest"
+					)
 				}
 			}
 		}

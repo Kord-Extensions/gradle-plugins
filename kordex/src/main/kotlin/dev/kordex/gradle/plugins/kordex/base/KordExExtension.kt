@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package dev.kordex.gradle.plugins.kordex.extensions
+package dev.kordex.gradle.plugins.kordex.base
 
 import dev.kordex.gradle.plugins.kordex.DataCollection
 import org.gradle.api.provider.ListProperty
@@ -24,8 +24,10 @@ interface KordExExtension {
 
 	val modules: ListProperty<String>
 
+	val pluginMode: Property<Boolean>
+
 	fun dataCollection(level: DataCollection?) {
-		dataCollection.set(level ?: DataCollection.None)  // Makes linter happy.
+		dataCollection.set(level ?: DataCollection.None)
 	}
 
 	fun module(module: String) {

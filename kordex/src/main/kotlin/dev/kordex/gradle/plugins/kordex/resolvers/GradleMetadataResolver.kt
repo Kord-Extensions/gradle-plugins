@@ -15,11 +15,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
-class GradleMetadataResolver {
+object GradleMetadataResolver {
 	@Suppress("UnusedPrivateProperty")  // For now...
 	private val logger = LoggerFactory.getLogger("GradleMetadataResolver")
-
-	private val mavenResolver = MavenMetadataResolver()
 
 	private val client = HttpClient()
 	private val json = Json
@@ -59,14 +57,14 @@ class GradleMetadataResolver {
 	fun getKordRelease(version: String) = getMetadata(kordReleasesUrl("$version/kord-core-$version.module"))
 
 	fun getKordSnapshot(version: String) = runBlocking {
-		val metadata = mavenResolver.getKordSnapshot(version)
+		val metadata = MavenMetadataResolver.getKordSnapshot(version)
 		val currentVersion = metadata.versioning.snapshotVersions!!.first().value
 
 		getMetadata(kordSnapshotUrl("$version/kord-core-$currentVersion.module"))
 	}
 
 	fun getKordExSnapshot(version: String) = runBlocking {
-		val metadata = mavenResolver.getKordExSnapshot(version)
+		val metadata = MavenMetadataResolver.getKordExSnapshot(version)
 		val currentVersion = metadata.versioning.snapshotVersions!!.first().value
 
 		getMetadata(kordExSnapshotUrl("$version/kord-extensions-$currentVersion.module"))

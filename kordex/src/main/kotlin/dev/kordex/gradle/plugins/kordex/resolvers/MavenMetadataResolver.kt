@@ -22,7 +22,7 @@ import kotlinx.serialization.decodeFromString
 import nl.adaptivity.xmlutil.serialization.XML
 import org.slf4j.LoggerFactory
 
-class MavenMetadataResolver {
+object MavenMetadataResolver {
 	@Suppress("UnusedPrivateProperty")  // For now...
 	private val logger = LoggerFactory.getLogger("MavenMetadataResolver")
 
