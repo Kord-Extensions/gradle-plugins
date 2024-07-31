@@ -6,31 +6,43 @@
 
 package dev.kordex.gradle.plugins.kordex.base
 
-import dev.kordex.gradle.plugins.kordex.DataCollection
+import dev.kordex.gradle.plugins.kordex.bot.KordExBotSettings
+import dev.kordex.gradle.plugins.kordex.bot.setup
+import dev.kordex.gradle.plugins.kordex.plugins.KordExPluginSettings
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.create
 
-interface KordExExtension {
-	val mainClass: Property<String>
+abstract class KordExExtension : ExtensionAware {
+	abstract val addRepositories: Property<Boolean>
+	abstract val ignoreIncompatibleKotlinVersion: Property<Boolean>
 
-	val addRepositories: Property<Boolean>
-	val dataCollection: Property<DataCollection>
-	val ignoreIncompatibleKotlinVersion: Property<Boolean>
+	abstract val kordExVersion: Property<String>
+	abstract val kordVersion: Property<String>
 
-	val voice: Property<Boolean>
+	abstract val modules: ListProperty<String>
 
-	val kordVersion: Property<String>
-	val kordExVersion: Property<String>
+	@Suppress("VariableNaming", "PropertyName")
+	internal lateinit var _bot: KordExBotSettings
 
-	val modules: ListProperty<String>
+	@Suppress("VariableNaming", "PropertyName")
+	internal lateinit var _plugin: KordExPluginSettings
 
-	val pluginMode: Property<Boolean>
-
-	fun dataCollection(level: DataCollection?) {
-		dataCollection.set(level ?: DataCollection.None)
-	}
+	internal val hasBot: Boolean get() = _bot.mainClass.isPresent
+	internal val hasPlugin: Boolean get() = _plugin.pluginClass.isPresent
 
 	fun module(module: String) {
 		modules.add(module)
+	}
+
+	internal fun setup() {
+		_bot = (this as ExtensionAware).extensions.create<KordExBotSettings>("bot")
+		_plugin = (this as ExtensionAware).extensions.create<KordExPluginSettings>("plugin")
+
+		_bot.setup()
+
+		addRepositories.convention(true)
+		ignoreIncompatibleKotlinVersion.convention(false)
 	}
 }

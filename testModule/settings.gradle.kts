@@ -6,7 +6,6 @@ pluginManagement {
 
         mavenLocal()
     }
-
 }
 
 buildscript {

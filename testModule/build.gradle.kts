@@ -1,5 +1,5 @@
 plugins {
-	kotlin("jvm") version "2.0.20-Beta1"
+	kotlin("jvm") version "2.0.20-Beta2"
 
 	id("dev.kordex.gradle.kordex") version "1.1.0"
 }
@@ -11,5 +11,9 @@ repositories {
 }
 
 kordEx {
-	mainClass = "template.MainKt"
+	ignoreIncompatibleKotlinVersion = true
+
+	bot {
+		mainClass = "template.MainKt"
+	}
 }

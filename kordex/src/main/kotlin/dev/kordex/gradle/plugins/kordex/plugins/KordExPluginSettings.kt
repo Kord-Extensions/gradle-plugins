@@ -11,11 +11,12 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 interface KordExPluginSettings {
+	val pluginClass: Property<String>
 	val id: Property<String>
 	val version: Property<String>
 
 	val author: Property<String>
-	val descriptor: Property<String>
+	val description: Property<String>
 	val license: Property<String>
 
 	val kordExVersionSpecifier: Property<String>
