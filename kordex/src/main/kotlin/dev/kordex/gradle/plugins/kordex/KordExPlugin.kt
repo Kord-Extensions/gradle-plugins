@@ -223,7 +223,7 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 				if (kotlinJarName == null) {
 					logger.warn("WARNING | Kotlin JVM plugin applied, but the JAR couldn't be found. Found JARs:")
 
-					target.buildscript.configurations.getByName("classPath").forEach {
+					target.buildscript.configurations.getByName("classpath").forEach {
 						logger.warn("-> ${it.name}")
 					}
 
