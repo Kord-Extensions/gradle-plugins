@@ -39,7 +39,7 @@ object KordExBotHelper {
 
 				properties.setProperty(
 					"settings.dataCollection",
-					extension._bot.dataCollection.orNull?.readable.toString()
+					extension.bot.dataCollection.orNull?.readable.toString()
 				)
 
 				properties.setProperty("modules", extension.modules.get().joinToString())

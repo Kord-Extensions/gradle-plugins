@@ -7,15 +7,17 @@
 package dev.kordex.gradle.plugins.kordex.base
 
 import dev.kordex.gradle.plugins.kordex.bot.KordExBotSettings
-import dev.kordex.gradle.plugins.kordex.bot.setup
 import dev.kordex.gradle.plugins.kordex.plugins.KordExPluginSettings
+import org.gradle.api.Action
+import org.gradle.api.internal.provider.PropertyFactory
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.kotlin.dsl.create
+import javax.inject.Inject
 
-abstract class KordExExtension : ExtensionAware {
+abstract class KordExExtension @Inject constructor(props: PropertyFactory) : ExtensionAware {
 	abstract val addRepositories: Property<Boolean>
+	abstract val configurations: ListProperty<String>
 	abstract val ignoreIncompatibleKotlinVersion: Property<Boolean>
 
 	abstract val kordExVersion: Property<String>
@@ -23,25 +25,29 @@ abstract class KordExExtension : ExtensionAware {
 
 	abstract val modules: ListProperty<String>
 
-	@Suppress("VariableNaming", "PropertyName")
-	internal lateinit var _bot: KordExBotSettings
+	internal val bot: KordExBotSettings = KordExBotSettings(props)
+	internal val plugin: KordExPluginSettings = KordExPluginSettings(props)
 
-	@Suppress("VariableNaming", "PropertyName")
-	internal lateinit var _plugin: KordExPluginSettings
+	internal var hasBot = false
+	internal var hasPlugin = false
 
-	internal val hasBot: Boolean get() = _bot.mainClass.isPresent
-	internal val hasPlugin: Boolean get() = _plugin.pluginClass.isPresent
+	fun bot(action: Action<KordExBotSettings>) {
+		action.execute(bot)
+
+		hasBot = true
+	}
+
+	fun plugin(action: Action<KordExPluginSettings>) {
+		action.execute(plugin)
+
+		hasPlugin = true
+	}
 
 	fun module(module: String) {
 		modules.add(module)
 	}
 
 	internal fun setup() {
-		_bot = (this as ExtensionAware).extensions.create<KordExBotSettings>("bot")
-		_plugin = (this as ExtensionAware).extensions.create<KordExPluginSettings>("plugin")
-
-		_bot.setup()
-
 		addRepositories.convention(true)
 		ignoreIncompatibleKotlinVersion.convention(false)
 	}

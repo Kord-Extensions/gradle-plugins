@@ -7,18 +7,15 @@
 package dev.kordex.gradle.plugins.kordex.bot
 
 import dev.kordex.gradle.plugins.kordex.DataCollection
+import org.gradle.api.internal.provider.PropertyFactory
 import org.gradle.api.provider.Property
 
-interface KordExBotSettings {
-	val mainClass: Property<String>
-	val dataCollection: Property<DataCollection>
-	val voice: Property<Boolean>
+class KordExBotSettings(props: PropertyFactory) {
+	val mainClass: Property<String> = props.property(String::class.java)
+	val dataCollection: Property<DataCollection> = props.property(DataCollection::class.java)
+	val voice: Property<Boolean> = props.property(Boolean::class.javaObjectType).convention(true)
 
 	fun dataCollection(level: DataCollection?) {
 		dataCollection.set(level ?: DataCollection.None)
 	}
-}
-
-internal fun KordExBotSettings.setup() {
-	voice.convention(true)
 }

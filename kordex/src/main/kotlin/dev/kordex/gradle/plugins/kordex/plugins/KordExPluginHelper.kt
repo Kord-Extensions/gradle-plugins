@@ -80,9 +80,9 @@ object KordExPluginHelper {
 		}
 
 		val requiredProperties = mapOf(
-			"plugin.pluginClass" to extension._plugin.pluginClass,
-			"plugin.id" to extension._plugin.id,
-			"plugin.version" to extension._plugin.version,
+			"plugin -> pluginClass" to extension.plugin.pluginClass,
+			"plugin -> id" to extension.plugin.id,
+			"plugin -> version" to extension.plugin.version,
 		)
 
 		requiredProperties.forEach { (key, value) ->
@@ -104,28 +104,28 @@ object KordExPluginHelper {
 			doLast {
 				val properties = Properties()
 
-				properties.setProperty("plugin.class", extension._plugin.pluginClass.get())
-				properties.setProperty("plugin.id", extension._plugin.id.get())
-				properties.setProperty("plugin.version", extension._plugin.version.get())
+				properties.setProperty("plugin.class", extension.plugin.pluginClass.get())
+				properties.setProperty("plugin.id", extension.plugin.id.get())
+				properties.setProperty("plugin.version", extension.plugin.version.get())
 
-				if (extension._plugin.author.isPresent) {
-					properties.setProperty("plugin.provider", extension._plugin.author.get())
+				if (extension.plugin.author.isPresent) {
+					properties.setProperty("plugin.provider", extension.plugin.author.get())
 				}
 
-				if (!extension._plugin.dependencies.orNull.isNullOrEmpty()) {
-					properties.setProperty("plugin.dependencies", extension._plugin.dependencies.get().joinToString())
+				if (!extension.plugin.dependencies.orNull.isNullOrEmpty()) {
+					properties.setProperty("plugin.dependencies", extension.plugin.dependencies.get().joinToString())
 				}
 
-				if (extension._plugin.description.isPresent) {
-					properties.setProperty("plugin.description", extension._plugin.description.get())
+				if (extension.plugin.description.isPresent) {
+					properties.setProperty("plugin.description", extension.plugin.description.get())
 				}
 
-				if (extension._plugin.license.isPresent) {
-					properties.setProperty("plugin.license", extension._plugin.license.get())
+				if (extension.plugin.license.isPresent) {
+					properties.setProperty("plugin.license", extension.plugin.license.get())
 				}
 
-				if (extension._plugin.kordExVersionSpecifier.isPresent) {
-					properties.setProperty("plugin.requires", extension._plugin.kordExVersionSpecifier.get())
+				if (extension.plugin.kordExVersionSpecifier.isPresent) {
+					properties.setProperty("plugin.requires", extension.plugin.kordExVersionSpecifier.get())
 				}
 
 				properties.store(outputFile.get().asFile.writer(), null)

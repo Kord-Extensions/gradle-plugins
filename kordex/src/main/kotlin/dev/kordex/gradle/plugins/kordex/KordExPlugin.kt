@@ -54,15 +54,6 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 					solution("If you need both in the same project, split them into separate Gradle subprojects")
 					severity(Severity.ERROR)
 				}
-			} else if (!extension.hasBot && !extension.hasPlugin) {
-				problemReporter.reporting {
-					id("no-bot-or-plugin", "Project '${target.name} is neither bot nor plugin")
-					details("Project ${target.name} doesn't have a bot or plugin configured, so there's nothing to do")
-					solution("Configure a bot or plugin via the 'bot or 'plugin' builders in the 'kordEx' builder")
-					severity(Severity.WARNING)
-				}
-
-				return@afterEvaluate
 			}
 
 			val versions = calculateVersions(extension)
@@ -126,7 +117,7 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 		val modules = extension.modules.get().normalizeModules()
 
 		if ("extra-mappings" in modules) {
-			target.repo("https://maven.fabricmc.net`")
+			target.repo("https://maven.fabricmc.net")
 			target.repo("https://maven.quiltmc.org/repository/release")
 			target.repo("https://maven.quiltmc.org/repository/snapshot")
 			target.repo("https://maven.shedaniel.me")
@@ -140,20 +131,32 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 		kordExVersion: Version,
 		kordVersion: Version?
 	) {
-		val configurations = if (extension.hasPlugin) {
+		val configurations = if (extension.configurations.isPresent && extension.configurations.get().isNotEmpty()) {
+			extension.configurations.get().toTypedArray()
+		} else if (extension.hasPlugin) {
 			arrayOf("compileOnly")
 		} else {
 			arrayOf("implementation")
 		}
 
 		target.afterEvaluate {
+			target.pluginManager.withPlugin("com.google.devtools.ksp") {
+				logger.info("KSP plugin detected, adding Kord Extensions annotation processor")
+
+				target.addDependency(
+					arrayOf("ksp"),
+					"com.kotlindiscord.kord.extensions:annotation-processor:$kordExVersion"
+				)
+			}
+
 			target.addDependency(
 				configurations,
 				"com.kotlindiscord.kord.extensions:kord-extensions:$kordExVersion"
 			) { exclude("dev.kord", "kord-core-voice") }
 
 			if (kordVersion != null) {
-				if (extension.hasPlugin || extension._bot.voice.get()) {
+				@Suppress("UnnecessaryParentheses")  // Reads better
+				if (extension.hasPlugin || (extension.hasBot && extension.bot.voice.get())) {
 					target.addDependency(
 						configurations,
 						"dev.kord:kord-core-voice:$kordVersion"
@@ -299,17 +302,17 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 			}
 		}
 
-		if (extension.hasBot) {
+		if (extension.hasBot && extension.bot.mainClass.isPresent) {
 			target.tasks.withType<Jar> {
 				manifest {
 					attributes(
-						"Main-Class" to extension._bot.mainClass.get()
+						"Main-Class" to extension.bot.mainClass.get()
 					)
 				}
 			}
 
 			target.extensions.configure<JavaApplication> {
-				mainClass = extension._bot.mainClass
+				mainClass = extension.bot.mainClass
 			}
 		}
 	}
