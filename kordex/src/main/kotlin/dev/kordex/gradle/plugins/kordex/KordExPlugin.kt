@@ -216,9 +216,19 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 
 				val kotlinJarName = target.buildscript.configurations
 					.getByName("classpath")
-					.first {
+					.firstOrNull {
 						kotlinJarRegex.matches(it.name)
-					}.name
+					}?.name
+
+				if (kotlinJarName == null) {
+					logger.warn("WARNING | Kotlin JVM plugin applied, but the JAR couldn't be found. Found JARs:")
+
+					target.buildscript.configurations.getByName("classPath").forEach {
+						logger.warn("-> ${it.name}")
+					}
+
+					return@doLast
+				}
 
 				val version = kotlinJarRegex.matchEntire(kotlinJarName)!!.groupValues[1]
 
