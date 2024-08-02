@@ -274,16 +274,20 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 	}
 
 	private fun configureCompilerPlugins(target: Project, extension: KordExExtension, kordExGradle: GradleMetadata) {
-		val versionElement = kordExGradle
-			.variants
-			.first { it.name == "apiElements" }
-			.attributes?.get("org.gradle.jvm.version")
-			?: kordExGradle
+		val javaVersion = if (extension.jvmTarget.isPresent) {
+			extension.jvmTarget.get()
+		} else {
+			val versionElement = kordExGradle
 				.variants
-				.first { it.name == "runtimeElements" }
+				.first { it.name == "apiElements" }
 				.attributes?.get("org.gradle.jvm.version")
+				?: kordExGradle
+					.variants
+					.first { it.name == "runtimeElements" }
+					.attributes?.get("org.gradle.jvm.version")
 
-		val javaVersion = versionElement?.jsonPrimitive?.int
+			versionElement?.jsonPrimitive?.int
+		}
 
 		target.tasks.withType<KotlinCompile> {
 			compilerOptions {

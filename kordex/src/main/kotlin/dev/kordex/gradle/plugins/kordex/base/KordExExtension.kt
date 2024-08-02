@@ -19,6 +19,7 @@ abstract class KordExExtension @Inject constructor(props: PropertyFactory) : Ext
 	abstract val addRepositories: Property<Boolean>
 	abstract val configurations: ListProperty<String>
 	abstract val ignoreIncompatibleKotlinVersion: Property<Boolean>
+	abstract val jvmTarget: Property<Int>
 
 	abstract val kordExVersion: Property<String>
 	abstract val kordVersion: Property<String>
