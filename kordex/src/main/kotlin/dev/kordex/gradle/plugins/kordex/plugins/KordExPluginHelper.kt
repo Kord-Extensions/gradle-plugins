@@ -6,6 +6,8 @@
 
 package dev.kordex.gradle.plugins.kordex.plugins
 
+import com.github.zafarkhaja.semver.ParseException
+import com.github.zafarkhaja.semver.expr.ExpressionParser
 import dev.kordex.gradle.plugins.kordex.base.KordExExtension
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -89,6 +91,12 @@ object KordExPluginHelper {
 			if (!value.isPresent) {
 				error("Required property $key has not been set.")
 			}
+		}
+
+		try {
+			ExpressionParser.newInstance().parse(extension.plugin.version.get())
+		} catch (e: ParseException) {
+			throw IllegalStateException("Unable to parse plugin version ${extension.plugin.version.get()}", e)
 		}
 	}
 

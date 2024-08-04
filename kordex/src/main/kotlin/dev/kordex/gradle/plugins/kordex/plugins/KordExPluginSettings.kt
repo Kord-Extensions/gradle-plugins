@@ -7,21 +7,23 @@
 package dev.kordex.gradle.plugins.kordex.plugins
 
 import com.github.zafarkhaja.semver.expr.ExpressionParser
+import dev.kordex.gradle.plugins.kordex.list
+import dev.kordex.gradle.plugins.kordex.single
 import org.gradle.api.internal.provider.PropertyFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 class KordExPluginSettings(props: PropertyFactory) {
-	val pluginClass: Property<String> = props.property(String::class.java)
-	val id: Property<String> = props.property(String::class.java)
-	val version: Property<String> = props.property(String::class.java)
+	val pluginClass: Property<String> = props.single()
+	val id: Property<String> = props.single()
+	val version: Property<String> = props.single()
 
-	val author: Property<String> = props.property(String::class.java)
-	val description: Property<String> = props.property(String::class.java)
-	val license: Property<String> = props.property(String::class.java)
+	val author: Property<String> = props.single()
+	val description: Property<String> = props.single()
+	val license: Property<String> = props.single()
 
-	val kordExVersionSpecifier: Property<String> = props.property(String::class.java)
-	val dependencies: ListProperty<String> = props.listProperty(String::class.java)
+	val kordExVersionSpecifier: Property<String> = props.single()
+	val dependencies: ListProperty<String> = props.list()
 
 	fun dependency(id: String, versionSpecifier: String? = null, optional: Boolean = false) {
 		// Try to parse the expression as pf4j does, to check validity.
