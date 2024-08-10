@@ -4,4 +4,5 @@ plugins {
 
 rootProject.name = "gradle-plugins"
 
+include("docker")
 include("kordex")
