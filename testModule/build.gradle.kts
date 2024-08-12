@@ -1,12 +1,13 @@
 import dev.kordex.gradle.plugins.docker.file.*
-import dev.kordex.gradle.plugins.docker.file.commands.RunCommand
+import dev.kordex.gradle.plugins.docker.file.commands.*
 
 plugins {
+	val pluginVersion = "1.2.1"
+
 	kotlin("jvm") version "2.0.20-Beta1"
 
-	id("dev.kordex.gradle.docker") version "1.2.0"
-	id("dev.kordex.gradle.kordex") version "1.2.0"
-//	id("com.google.devtools.ksp") version "2.0.20-Beta1-1.0.22"
+	id("dev.kordex.gradle.docker") version pluginVersion
+	id("dev.kordex.gradle.kordex") version pluginVersion
 }
 
 version = "1.0.0"
@@ -16,8 +17,6 @@ repositories {
 }
 
 kordEx {
-//	jvmTarget = 17
-
 	bot {
 		mainClass = "template.MainKt"
 	}
@@ -51,7 +50,8 @@ docker {
 		)
 
 		emptyLine()
-		comment("Added to test the output - this Dockerfile isn't meant to work!")
+
+		comment("Added to test the output - this Dockerfile isn't meant to work in prod!")
 
 		runExec("banana") {
 			bindMount {

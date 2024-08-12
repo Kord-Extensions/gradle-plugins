@@ -16,7 +16,9 @@ import org.gradle.api.provider.Property
 import javax.inject.Inject
 
 abstract class KordExExtension @Inject constructor(props: PropertyFactory) : ExtensionAware {
+	abstract val addDependencies: Property<Boolean>
 	abstract val addRepositories: Property<Boolean>
+
 	abstract val configurations: ListProperty<String>
 	abstract val ignoreIncompatibleKotlinVersion: Property<Boolean>
 	abstract val jvmTarget: Property<Int>
@@ -49,6 +51,7 @@ abstract class KordExExtension @Inject constructor(props: PropertyFactory) : Ext
 	}
 
 	internal fun setup() {
+		addDependencies.convention(true)
 		addRepositories.convention(true)
 		ignoreIncompatibleKotlinVersion.convention(false)
 	}

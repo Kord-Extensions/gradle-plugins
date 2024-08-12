@@ -71,7 +71,12 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 			configureCompilerPlugins(target, extension, versions.kordExGradle)
 
 			addRepos(target, extension)
-			addDependencies(target, extension, versions.kordEx, versions.kord)
+
+			if (extension.addDependencies.orNull == true) {
+				addDependencies(target, extension, versions.kordEx, versions.kord)
+			} else {
+				logger.info("Not configuring dependencies, as `addDependencies` is set to `false` or is missing.")
+			}
 		}
 	}
 
