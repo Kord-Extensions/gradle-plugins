@@ -70,7 +70,7 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 
 			configureCompilerPlugins(target, extension, versions.kordExGradle)
 
-			addRepos(target, extension)
+			addRepos(target, extension, versions.kordEx)
 
 			if (extension.addDependencies.orNull == true) {
 				addDependencies(target, extension, versions.kordEx, versions.kord)
@@ -82,12 +82,14 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 
 	private fun calculateVersions(extension: KordExExtension): VersionContainer {
 		val kordExVersion = if (!extension.kordExVersion.isPresent || extension.kordExVersion.orNull == "latest") {
-			latestKordExMetadata.getCurrentVersion()
+			latestKordExMetadata?.getCurrentVersion()
+				?: error("Unable to resolve Kord Extensions release metadata. Please report this!")
 		} else {
 			extension.kordExVersion.map(::Version).orNull
 		}!!
 
 		val kordExGradle = GradleMetadataResolver.kordEx(kordExVersion)
+			?: error("Unable to resolve Kord Extensions release metadata. Please report this!")
 
 		val kordVersion = when (extension.kordVersion.orNull) {
 			null ->
@@ -98,15 +100,15 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 					.version["requires"]
 					?.let { Version(it) }
 
-			"latest" -> latestKordMetadata.getCurrentVersion()
+			"latest" -> latestKordMetadata?.getCurrentVersion()
 
 			else -> extension.kordVersion.map(::Version).orNull
-		}
+		} ?: error("Unable to resolve Kord release metadata. Please report this!")
 
 		return VersionContainer(kordExVersion, kordVersion, kordExGradle)
 	}
 
-	private fun addRepos(target: Project, extension: KordExExtension) {
+	private fun addRepos(target: Project, extension: KordExExtension, kordExVersion: Version) {
 		if (!extension.addRepositories.get()) {
 			return
 		}
@@ -119,9 +121,9 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 		target.repo(S01_BASE)
 		target.repo(OSS_BASE)
 
-		val modules = extension.modules.get().normalizeModules()
+		val modules = extension.modules.get().normalizeModules(kordExVersion, log = false)
 
-		if ("extra-mappings" in modules) {
+		if (MAPPINGS_V1 in modules || MAPPINGS_V2 in modules) {
 			target.repo("https://maven.fabricmc.net")
 			target.repo("https://maven.quiltmc.org/repository/release")
 			target.repo("https://maven.quiltmc.org/repository/snapshot")
@@ -144,19 +146,31 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 			arrayOf("implementation")
 		}
 
+		val basePackage = if (kordExVersion.isKX2) {
+			"dev.kordex"
+		} else {
+			"com.kotlindiscord.kord.extensions"
+		}
+
+		val modulePackage = if (kordExVersion.isKX2) {
+			"$basePackage.modules"
+		} else {
+			basePackage
+		}
+
 		target.afterEvaluate {
 			target.pluginManager.withPlugin("com.google.devtools.ksp") {
 				logger.info("KSP plugin detected, adding Kord Extensions annotation processor")
 
 				target.addDependency(
 					arrayOf("ksp"),
-					"com.kotlindiscord.kord.extensions:annotation-processor:$kordExVersion"
+					"$basePackage:annotation-processor:$kordExVersion"
 				)
 			}
 
 			target.addDependency(
 				configurations,
-				"com.kotlindiscord.kord.extensions:kord-extensions:$kordExVersion"
+				"$basePackage:kord-extensions:$kordExVersion"
 			) { exclude("dev.kord", "kord-core-voice") }
 
 			if (kordVersion != null) {
@@ -174,16 +188,17 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 				}
 			}
 
-			extension.modules.get().normalizeModules().forEach { module ->
+			extension.modules.get().normalizeModules(kordExVersion).forEach { module ->
 				target.addDependency(
 					configurations,
-					"com.kotlindiscord.kord.extensions:$module:$kordExVersion"
+					"$modulePackage:$module:$kordExVersion"
 				) {
-					exclude("com.kotlindiscord.kord.extensions", "kord-extensions")
+					exclude(basePackage, "kord-extensions")
 				}
 
-				if (module == "adapter-mongodb") {
-					val mongoLatest = latestMongoDBMetadata.versioning.latest!!
+				if (module in MONGODB_MODULES) {
+					val mongoLatest = latestMongoDBMetadata?.versioning?.latest
+						?: error("Unable to resolve MongoDB release metadata. Please report this!")
 
 					target.addDependency(
 						configurations,

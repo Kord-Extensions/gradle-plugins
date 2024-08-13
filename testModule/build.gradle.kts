@@ -2,7 +2,7 @@ import dev.kordex.gradle.plugins.docker.file.*
 import dev.kordex.gradle.plugins.docker.file.commands.*
 
 plugins {
-	val pluginVersion = "1.2.1"
+	val pluginVersion = "1.3.0"
 
 	kotlin("jvm") version "2.0.20-Beta1"
 
@@ -17,6 +17,9 @@ repositories {
 }
 
 kordEx {
+	module("data-mongodb")
+	module("extra-pluralkit")
+
 	bot {
 		mainClass = "template.MainKt"
 	}

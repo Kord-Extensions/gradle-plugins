@@ -15,12 +15,32 @@ val kordSnapshots = MavenMetadataResolver.getKordSnapshots()
 val kordExReleases = MavenMetadataResolver.getKordExReleases()
 val kordExSnapshots = MavenMetadataResolver.getKordExSnapshots()
 
-val latestKordMetadata = maxOf(kordReleases, kordSnapshots) { left, right ->
-	left.getCurrentVersion().compareTo(right.getCurrentVersion())
+val latestKordMetadata = if (kordReleases == null && kordSnapshots == null) {
+	null
+} else {
+	if (kordReleases == null) {
+		kordSnapshots!!
+	} else if (kordSnapshots == null) {
+		kordReleases
+	} else {
+		maxOf(kordReleases, kordSnapshots) { left, right ->
+			left.getCurrentVersion().compareTo(right.getCurrentVersion())
+		}
+	}
 }
 
-val latestKordExMetadata = maxOf(kordExReleases, kordExSnapshots) { left, right ->
-	left.getCurrentVersion().compareTo(right.getCurrentVersion())
+val latestKordExMetadata = if (kordExReleases == null && kordExSnapshots == null) {
+	null
+} else {
+	if (kordExReleases == null) {
+		kordExSnapshots!!
+	} else if (kordExSnapshots == null) {
+		kordExReleases
+	} else {
+		maxOf(kordExReleases, kordExSnapshots) { left, right ->
+			left.getCurrentVersion().compareTo(right.getCurrentVersion())
+		}
+	}
 }
 
 val latestMongoDBMetadata by lazy {

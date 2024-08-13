@@ -54,3 +54,6 @@ operator fun Version?.compareTo(other: String?): Int {
 
 	return FlexVerComparator.compare(this!!.version, other!!)
 }
+
+val Version.isKX2: Boolean
+	get() = version.startsWith("2.")

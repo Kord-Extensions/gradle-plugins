@@ -8,8 +8,10 @@
 
 package dev.kordex.gradle.plugins.kordex.resolvers
 
-import dev.kordex.gradle.plugins.kordex.kordExReleasesUrl
-import dev.kordex.gradle.plugins.kordex.kordExSnapshotUrl
+import dev.kordex.gradle.plugins.kordex.kordExReleasesUrlv1
+import dev.kordex.gradle.plugins.kordex.kordExReleasesUrlv2
+import dev.kordex.gradle.plugins.kordex.kordExSnapshotUrlv1
+import dev.kordex.gradle.plugins.kordex.kordExSnapshotUrlv2
 import dev.kordex.gradle.plugins.kordex.kordReleasesUrl
 import dev.kordex.gradle.plugins.kordex.kordSnapshotUrl
 import dev.kordex.gradle.plugins.kordex.resolvers.maven.MavenMetadata
@@ -17,6 +19,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import nl.adaptivity.xmlutil.serialization.XML
@@ -36,24 +39,58 @@ object MavenMetadataResolver {
 		}
 	}
 
-	private val cache: MutableMap<String, MavenMetadata> = mutableMapOf()
+	private val cache: MutableMap<String, MavenMetadata?> = mutableMapOf()
 		@Synchronized get
 
-	fun getMetadata(url: String): MavenMetadata = runBlocking {
-		cache.getOrPut(url) {
-			val data = client.get(url).body<String>()
+	fun getMetadata(vararg urls: String): MavenMetadata? {
+		return runBlocking {
+			for (url in urls) {
+				val result = cache.getOrPut(url) {
+					val request = client.get(url)
 
-			MavenMetadata(xml.decodeFromString(data))
+					if (request.status == HttpStatusCode.NotFound) {
+						null
+					} else {
+						val data = client.get(url).body<String>()
+
+						MavenMetadata(xml.decodeFromString(data))
+					}
+				}
+
+				if (result != null) {
+					return@runBlocking result
+				}
+			}
+
+			return@runBlocking null
 		}
 	}
 
-	fun getKordExReleases() = getMetadata(kordExReleasesUrl("maven-metadata.xml"))
-	fun getKordExSnapshots() = getMetadata(kordExSnapshotUrl("maven-metadata.xml"))
+	fun getKordExReleases() = getMetadata(
+		kordExReleasesUrlv2("maven-metadata.xml"),
+		kordExReleasesUrlv1("maven-metadata.xml"),
+	)
+
+	fun getKordExSnapshots() = getMetadata(
+		kordExSnapshotUrlv2("maven-metadata.xml"),
+		kordExSnapshotUrlv1("maven-metadata.xml")
+	)
+
 	fun getKordReleases() = getMetadata(kordReleasesUrl("maven-metadata.xml"))
 	fun getKordSnapshots() = getMetadata(kordSnapshotUrl("maven-metadata.xml"))
 
-	fun getKordExRelease(version: String) = getMetadata(kordExReleasesUrl("$version/maven-metadata.xml"))
-	fun getKordExSnapshot(version: String) = getMetadata(kordExSnapshotUrl("$version/maven-metadata.xml"))
+	fun getKordExRelease(version: String) = if (version.startsWith("2.")) {
+		getMetadata(kordExReleasesUrlv2("$version/maven-metadata.xml"))
+	} else {
+		getMetadata(kordExReleasesUrlv1("$version/maven-metadata.xml"))
+	}
+
+	fun getKordExSnapshot(version: String) = if (version.startsWith("2.")) {
+		getMetadata(kordExSnapshotUrlv2("$version/maven-metadata.xml"))
+	} else {
+		getMetadata(kordExSnapshotUrlv1("$version/maven-metadata.xml"))
+	}
+
 	fun getKordRelease(version: String) = getMetadata(kordReleasesUrl("$version/maven-metadata.xml"))
 	fun getKordSnapshot(version: String) = getMetadata(kordSnapshotUrl("$version/maven-metadata.xml"))
 
