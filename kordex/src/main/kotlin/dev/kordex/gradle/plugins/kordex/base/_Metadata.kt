@@ -24,7 +24,7 @@ val latestKordMetadata = if (kordReleases == null && kordSnapshots == null) {
 		kordReleases
 	} else {
 		maxOf(kordReleases, kordSnapshots) { left, right ->
-			left.getCurrentVersion().compareTo(right.getCurrentVersion())
+			left.getCurrentKordVersion().compareTo(right.getCurrentKordVersion())
 		}
 	}
 }

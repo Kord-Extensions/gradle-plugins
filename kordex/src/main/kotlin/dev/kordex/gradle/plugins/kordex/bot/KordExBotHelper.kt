@@ -8,14 +8,14 @@ package dev.kordex.gradle.plugins.kordex.bot
 
 import dev.kordex.gradle.plugins.kordex.VersionContainer
 import dev.kordex.gradle.plugins.kordex.base.KordExExtension
+import dev.kordex.gradle.plugins.kordex.helpers.ApplicationPluginHelper
 import org.gradle.api.Project
-import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.SourceSetContainer
 import java.util.*
 
 object KordExBotHelper {
 	fun process(target: Project, extension: KordExExtension, versions: VersionContainer) {
-		target.pluginManager.apply(ApplicationPlugin::class.java)
+		ApplicationPluginHelper.apply(target, extension)
 
 		addGeneratedFiles(target, extension, versions)
 	}

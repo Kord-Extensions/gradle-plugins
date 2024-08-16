@@ -1,0 +1,27 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+package dev.kordex.gradle.plugins.kordex.helpers
+
+import dev.kordex.gradle.plugins.kordex.Version
+import dev.kordex.gradle.plugins.kordex.base.addDependency
+import org.gradle.api.Project
+import org.slf4j.LoggerFactory
+
+object KspPluginHelper {
+	private val logger = LoggerFactory.getLogger(KspPluginHelper::class.java)
+
+	fun apply(target: Project, basePackage: String, version: Version) {
+		target.pluginManager.withPlugin("com.google.devtools.ksp") {
+			logger.info("KSP plugin detected, adding Kord Extensions annotation processor")
+
+			target.addDependency(
+				arrayOf("ksp"),
+				"$basePackage:annotation-processor:$version"
+			)
+		}
+	}
+}

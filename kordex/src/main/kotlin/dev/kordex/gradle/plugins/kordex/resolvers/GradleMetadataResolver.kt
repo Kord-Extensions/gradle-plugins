@@ -17,8 +17,7 @@ import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
 object GradleMetadataResolver {
-	@Suppress("UnusedPrivateProperty")  // For now...
-	private val logger = LoggerFactory.getLogger("GradleMetadataResolver")
+	private val logger = LoggerFactory.getLogger(GradleMetadataResolver::class.java)
 
 	private val client = HttpClient()
 	private val json = Json
@@ -27,8 +26,10 @@ object GradleMetadataResolver {
 		@Synchronized get
 
 	fun getMetadata(url: String): GradleMetadata? = runBlocking {
-		cache.getOrPut(url) {
+		val value = cache.getOrPut(url) {
 			val response = client.get(url)
+
+			logger.info("{} -> HTTP {}", url, response.status.value)
 
 			if (response.status == HttpStatusCode.NotFound) {
 				null
@@ -38,6 +39,10 @@ object GradleMetadataResolver {
 				json.decodeFromString(data)
 			}
 		}
+
+		logger.info("{} -> {}", url, value)
+
+		value
 	}
 
 	fun kordEx(version: Version) =

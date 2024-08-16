@@ -14,8 +14,8 @@ import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.UnknownPluginException
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.api.tasks.bundling.Tar
+import org.gradle.kotlin.dsl.*
 import java.util.*
 
 object KordExPluginHelper {
@@ -66,19 +66,19 @@ object KordExPluginHelper {
 					}
 				}
 			}
+
+			target.tasks.withType<Tar> {
+				enabled = false
+			}
 		}
 	}
 
 	fun validate(target: Project, extension: KordExExtension) {
-		try {
-			target.plugins.getPlugin("application")
-
+		if (target.plugins.hasPlugin("application")) {
 			error(
 				"Project ${target.name} has the `application` plugin applied, which will interfere with your " +
 					"Kord Extensions plugin."
 			)
-		} catch (e: UnknownPluginException) {
-			// Nothing, this is what we want.
 		}
 
 		val requiredProperties = mapOf(

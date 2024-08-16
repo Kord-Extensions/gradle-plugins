@@ -61,6 +61,8 @@ if (releaseBody.contains("---")) {
 }
 
 val webhook = mapOf(
+	"content" to "<@&1264511165543743559>",
+
 	"embeds" to listOf(
 		mapOf(
 			"color" to 7506394,

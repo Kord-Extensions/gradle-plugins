@@ -26,8 +26,7 @@ import nl.adaptivity.xmlutil.serialization.XML
 import org.slf4j.LoggerFactory
 
 object MavenMetadataResolver {
-	@Suppress("UnusedPrivateProperty")  // For now...
-	private val logger = LoggerFactory.getLogger("MavenMetadataResolver")
+	private val logger = LoggerFactory.getLogger(MavenMetadataResolver::class.java)
 
 	private val client = HttpClient {
 		install(ContentNegotiation)
@@ -46,9 +45,11 @@ object MavenMetadataResolver {
 		return runBlocking {
 			for (url in urls) {
 				val result = cache.getOrPut(url) {
-					val request = client.get(url)
+					val response = client.get(url)
 
-					if (request.status == HttpStatusCode.NotFound) {
+					logger.info("{} -> HTTP {}", url, response.status.value)
+
+					if (response.status == HttpStatusCode.NotFound) {
 						null
 					} else {
 						val data = client.get(url).body<String>()
@@ -56,6 +57,8 @@ object MavenMetadataResolver {
 						MavenMetadata(xml.decodeFromString(data))
 					}
 				}
+
+				logger.info("{} -> {}", url, result)
 
 				if (result != null) {
 					return@runBlocking result

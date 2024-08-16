@@ -15,6 +15,7 @@ import org.gradle.api.provider.Property
 class KordExBotSettings(props: PropertyFactory) {
 	val mainClass: Property<String> = props.single()
 	val dataCollection: Property<DataCollection> = props.single()
+	val processDotEnv: Property<Boolean> = props.boolean().convention(true)
 	val voice: Property<Boolean> = props.boolean().convention(true)
 
 	fun dataCollection(level: DataCollection?) {

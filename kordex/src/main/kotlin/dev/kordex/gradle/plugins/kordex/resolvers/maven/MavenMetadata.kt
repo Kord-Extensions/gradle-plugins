@@ -24,6 +24,25 @@ class MavenMetadata(private val xml: XMLMavenMetadata) {
 		return versions.maxWithOrNull(Version::compareTo)
 	}
 
+	fun getCurrentKordVersion(): Version? {
+		val versions = versioning.snapshotVersions?.map { it.value }
+			?: versioning.versions
+			?: return null
+
+		val filtered = versions.filter {
+			if ("-SNAPSHOT" in it.version) {
+				val number = it.version.replace("-SNAPSHOT", "")
+				val parts = number.split(".")
+
+				parts.all { part -> part.matches("[xX\\d]+".toRegex()) }
+			} else {
+				true
+			}
+		}
+
+		return filtered.maxWithOrNull(Version::compareTo)
+	}
+
 	override fun toString(): String =
 		"MavenMetadata(artifactId=\"$artifactId\", groupId=\"$groupId\", versioning=\"$versioning\")"
 

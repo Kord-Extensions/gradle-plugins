@@ -10,6 +10,7 @@ package dev.kordex.gradle.plugins.kordex
 
 import dev.kordex.gradle.plugins.kordex.base.*
 import dev.kordex.gradle.plugins.kordex.bot.KordExBotHelper
+import dev.kordex.gradle.plugins.kordex.helpers.KspPluginHelper
 import dev.kordex.gradle.plugins.kordex.plugins.KordExPluginHelper
 import dev.kordex.gradle.plugins.kordex.resolvers.GradleMetadataResolver
 import dev.kordex.gradle.plugins.kordex.resolvers.gradle.GradleMetadata
@@ -18,11 +19,9 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.problems.Problems
 import org.gradle.api.problems.Severity
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -30,7 +29,8 @@ import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
 class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
-	private val kotlinJarRegex = "kotlin-compiler-[a-z]+-(.+)\\.jar".toRegex()
+	// kotlin-gradle-plugin-2.0.20-Beta1-gradle85.jar
+	private val kotlinJarRegex = "kotlin-gradle-plugin-(.+)-gradle\\d+\\.jar".toRegex()
 
 	val problemReporter = problems.forNamespace("dev.kordex")
 
@@ -68,7 +68,7 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 				KordExPluginHelper.process(target, extension)
 			}
 
-			configureCompilerPlugins(target, extension, versions.kordExGradle)
+			configurePlugins(target, extension, versions.kordExGradle)
 
 			addRepos(target, extension, versions.kordEx)
 
@@ -100,7 +100,7 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 					.version["requires"]
 					?.let { Version(it) }
 
-			"latest" -> latestKordMetadata?.getCurrentVersion()
+			"latest" -> latestKordMetadata?.getCurrentKordVersion()
 
 			else -> extension.kordVersion.map(::Version).orNull
 		} ?: error("Unable to resolve Kord release metadata. Please report this!")
@@ -159,14 +159,7 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 		}
 
 		target.afterEvaluate {
-			target.pluginManager.withPlugin("com.google.devtools.ksp") {
-				logger.info("KSP plugin detected, adding Kord Extensions annotation processor")
-
-				target.addDependency(
-					arrayOf("ksp"),
-					"$basePackage:annotation-processor:$kordExVersion"
-				)
-			}
+			KspPluginHelper.apply(target, basePackage, kordExVersion)
 
 			target.addDependency(
 				configurations,
@@ -234,17 +227,23 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 					return@doLast
 				}
 
-				val kotlinJarName = target.buildscript.configurations
-					.getByName("classpath")
+				val classpathJars = target.plugins.toList()
+					.map { it::class.java.protectionDomain.codeSource.location }
+					.map { it.path.split("/").last() }
+
+				val kotlinJarName = classpathJars
 					.firstOrNull {
-						kotlinJarRegex.matches(it.name)
-					}?.name
+						kotlinJarRegex.matches(it)
+					}
 
 				if (kotlinJarName == null) {
-					logger.warn("WARNING | Kotlin JVM plugin applied, but the JAR couldn't be found. Found JARs:")
+					logger.warn(
+						"WARNING | Kotlin JVM plugin applied, but the JAR couldn't be found. " +
+							"Found ${classpathJars.size} JARs:"
+					)
 
-					target.buildscript.configurations.getByName("classpath").forEach {
-						logger.warn("-> ${it.name}")
+					classpathJars.forEach {
+						logger.warn("-> $it")
 					}
 
 					return@doLast
@@ -303,7 +302,7 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 			.finalizedBy(checkTask)
 	}
 
-	private fun configureCompilerPlugins(target: Project, extension: KordExExtension, kordExGradle: GradleMetadata) {
+	private fun configurePlugins(target: Project, extension: KordExExtension, kordExGradle: GradleMetadata) {
 		val javaVersion = if (extension.jvmTarget.isPresent) {
 			extension.jvmTarget.get()
 		} else {
@@ -333,20 +332,6 @@ class KordExPlugin @Inject constructor(problems: Problems) : Plugin<Project> {
 			if (javaVersion != null) {
 				sourceCompatibility = JavaVersion.toVersion(javaVersion.toString())
 				targetCompatibility = JavaVersion.toVersion(javaVersion.toString())
-			}
-		}
-
-		if (extension.hasBot && extension.bot.mainClass.isPresent) {
-			target.tasks.withType<Jar> {
-				manifest {
-					attributes(
-						"Main-Class" to extension.bot.mainClass.get()
-					)
-				}
-			}
-
-			target.extensions.configure<JavaApplication> {
-				mainClass = extension.bot.mainClass
 			}
 		}
 	}
