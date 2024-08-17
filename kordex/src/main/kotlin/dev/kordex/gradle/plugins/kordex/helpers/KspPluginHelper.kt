@@ -9,6 +9,8 @@ package dev.kordex.gradle.plugins.kordex.helpers
 import dev.kordex.gradle.plugins.kordex.Version
 import dev.kordex.gradle.plugins.kordex.base.addDependency
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.kotlin.dsl.*
 import org.slf4j.LoggerFactory
 
 object KspPluginHelper {
@@ -22,6 +24,20 @@ object KspPluginHelper {
 				arrayOf("ksp"),
 				"$basePackage:annotation-processor:$version"
 			)
+
+			val sourceSets = target.extensions.getByType<SourceSetContainer>()
+
+			sourceSets.getByName("main") {
+				java {
+					srcDir(target.layout.buildDirectory.file("generated/ksp/main/kotlin/"))
+				}
+			}
+
+			sourceSets.getByName("test") {
+				java {
+					srcDir(target.layout.buildDirectory.file("generated/ksp/test/kotlin/"))
+				}
+			}
 		}
 	}
 }
