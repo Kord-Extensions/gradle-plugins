@@ -17,6 +17,7 @@ repositories {
 kordEx {
 	module("data-mongodb")
 	module("extra-pluralkit")
+	module("func-mappings")
 
 	kordVersion = "latest"
 
