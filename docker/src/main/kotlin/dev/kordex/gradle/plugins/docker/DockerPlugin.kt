@@ -21,10 +21,16 @@ class DockerPlugin : Plugin<Project> {
 			group = "generation"
 			description = "Generate a Dockerfile, as configured."
 
+			// Should fix skipping generation, but probably better solved by checking inputs
+			// and moving to properties in the extension.
+			outputs.upToDateWhen { false }
+
 			file = extension.target
 
-			extension.commandsBuilder(dockerFile.commands)
-			extension.directives.forEach(dockerFile.directives::set)
+			doFirst {
+				extension.commandsBuilder(dockerFile.commands)
+				extension.directives.forEach(dockerFile.directives::set)
+			}
 		}
 
 		if (extension.generateOnBuild) {

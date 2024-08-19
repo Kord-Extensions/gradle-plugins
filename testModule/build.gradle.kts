@@ -4,6 +4,7 @@ import dev.kordex.gradle.plugins.docker.file.commands.*
 plugins {
 	kotlin("jvm")
 
+	id("com.google.devtools.ksp")
 	id("dev.kordex.gradle.docker")
 	id("dev.kordex.gradle.kordex")
 }

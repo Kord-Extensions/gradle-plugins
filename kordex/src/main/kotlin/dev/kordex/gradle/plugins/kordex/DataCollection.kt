@@ -6,9 +6,28 @@
 
 package dev.kordex.gradle.plugins.kordex
 
-sealed class DataCollection(val readable: String) {
-	object None : DataCollection("none")
-	object Minimal : DataCollection("minimal")
-	object Standard : DataCollection("standard")
-	object Extra : DataCollection("extra")
+import java.io.Serializable
+
+@Suppress("UnusedPrivateMember")
+sealed class DataCollection(val readable: String) : Serializable {
+	object None : DataCollection("none") {
+		private fun readResolve(): Any = None
+	}
+
+	object Minimal : DataCollection("minimal") {
+		private fun readResolve(): Any = Minimal
+	}
+
+	object Standard : DataCollection("standard") {
+		private fun readResolve(): Any = Standard
+	}
+
+	object Extra : DataCollection("extra") {
+		private fun readResolve(): Any = Extra
+	}
+
+	companion object {
+		@Suppress("MagicNumber")
+		private const val serialVersionUID: Long = 100L
+	}
 }

@@ -32,6 +32,11 @@ object KordExBotHelper {
 			group = "generation"
 			description = "Generate KordEx metadata."
 
+			inputs.property("settings.dataCollection", extension.bot.dataCollection)
+			inputs.property("modules", extension.modules)
+			inputs.property("versions.kordEx", versions.kordEx.version)
+			inputs.property("versions.kord", versions.kord?.version)
+
 			outputs.file(outputFile)
 
 			doLast {
@@ -49,6 +54,10 @@ object KordExBotHelper {
 				properties.store(outputFile.get().asFile.writer(), null)
 			}
 		}
+
+		target.tasks
+			.getByName("build")
+			.dependsOn(task)
 
 		val sourceSet = target
 			.extensions

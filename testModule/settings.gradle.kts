@@ -1,9 +1,10 @@
 pluginManagement {
 	plugins {
-		val pluginVersion = "1.3.3"
+		val pluginVersion = "1.4.0"
 
 		kotlin("jvm") version "2.0.20-Beta1"
 
+		id("com.google.devtools.ksp") version "2.0.20-Beta1-1.0.22"
 		id("dev.kordex.gradle.docker") version pluginVersion
 		id("dev.kordex.gradle.kordex") version pluginVersion
 	}

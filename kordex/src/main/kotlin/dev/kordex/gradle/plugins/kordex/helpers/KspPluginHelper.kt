@@ -6,8 +6,6 @@
 
 package dev.kordex.gradle.plugins.kordex.helpers
 
-import dev.kordex.gradle.plugins.kordex.Version
-import dev.kordex.gradle.plugins.kordex.base.addDependency
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.*
@@ -16,14 +14,9 @@ import org.slf4j.LoggerFactory
 object KspPluginHelper {
 	private val logger = LoggerFactory.getLogger(KspPluginHelper::class.java)
 
-	fun apply(target: Project, basePackage: String, version: Version) {
+	fun apply(target: Project) {
 		target.pluginManager.withPlugin("com.google.devtools.ksp") {
 			logger.info("KSP plugin detected, adding Kord Extensions annotation processor")
-
-			target.addDependency(
-				arrayOf("ksp"),
-				"$basePackage:annotation-processor:$version"
-			)
 
 			val sourceSets = target.extensions.getByType<SourceSetContainer>()
 

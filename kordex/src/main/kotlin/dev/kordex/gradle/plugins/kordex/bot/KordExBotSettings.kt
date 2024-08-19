@@ -13,10 +13,20 @@ import org.gradle.api.internal.provider.PropertyFactory
 import org.gradle.api.provider.Property
 
 class KordExBotSettings(props: PropertyFactory) {
-	val mainClass: Property<String> = props.single()
-	val dataCollection: Property<DataCollection> = props.single()
-	val processDotEnv: Property<Boolean> = props.boolean().convention(true)
-	val voice: Property<Boolean> = props.boolean().convention(true)
+	val mainClass: Property<String> = props
+		.single()
+
+	val dataCollection: Property<DataCollection> = props
+		.single<DataCollection>()
+		.convention(DataCollection.Standard)
+
+	val processDotEnv: Property<Boolean> = props
+		.boolean()
+		.convention(true)
+
+	val voice: Property<Boolean> = props
+		.boolean()
+		.convention(true)
 
 	fun dataCollection(level: DataCollection?) {
 		dataCollection.set(level ?: DataCollection.None)
