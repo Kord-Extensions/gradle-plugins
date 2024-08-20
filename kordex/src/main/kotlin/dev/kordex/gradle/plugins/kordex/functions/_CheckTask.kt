@@ -29,12 +29,22 @@ fun Project.checkTask(
 		doLast {
 			val kordExGradle = versionsProvider.get().kordExGradle
 
-			val wantedVersion = kordExGradle
+			val runtimeElements = kordExGradle
 				.variants
 				.first { it.name == "runtimeElements" }
+
+			val wantedVersion = runtimeElements
 				.dependencies
 				.first { it.group == "org.jetbrains.kotlin" && it.module.contains("-stdlib-", true) }
-				.version["requires"]!!
+				.version["requires"]
+				?: runtimeElements
+					.dependencyConstraints
+					.first { it.group == "org.jetbrains.kotlin" && it.module.contains("-stdlib-", true) }
+					.version["requires"]
+
+			if (wantedVersion == null) {
+				error("Unable to figure out which Kotlin version is required. Please report this!")
+			}
 
 			val kotlinPlugin = pluginManager.findPlugin("org.jetbrains.kotlin.jvm")
 

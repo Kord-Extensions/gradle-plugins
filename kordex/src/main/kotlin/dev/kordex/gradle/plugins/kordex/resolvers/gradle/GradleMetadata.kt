@@ -34,6 +34,7 @@ data class GradleMetadata(
 		val attributes: JsonObject? = null,  // Mixed value types!
 
 		val dependencies: List<Dependency>,
+		val dependencyConstraints: List<Dependency> = listOf(),
 		val files: List<File>,
 
 		) {
