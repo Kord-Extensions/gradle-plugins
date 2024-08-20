@@ -106,8 +106,8 @@ class KordExPlugin @Inject constructor(
 						)
 					}
 
-//					println("Configuration: $name (${deps.size} dependencies)")
-//					deps.forEach { println(" -> ${it.group}:${it.name}:${it.version}") }
+// println("Configuration: $name (${deps.size} dependencies)")
+// deps.forEach { println(" -> ${it.group}:${it.name}:${it.version}") }
 
 					deps
 				}
