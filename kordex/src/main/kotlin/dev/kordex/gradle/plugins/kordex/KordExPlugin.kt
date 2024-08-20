@@ -14,6 +14,7 @@ import dev.kordex.gradle.plugins.kordex.functions.checkTask
 import dev.kordex.gradle.plugins.kordex.functions.configurationsProvider
 import dev.kordex.gradle.plugins.kordex.functions.packageProvider
 import dev.kordex.gradle.plugins.kordex.functions.versionsProvider
+import dev.kordex.gradle.plugins.kordex.helpers.KspPluginHelper
 import dev.kordex.gradle.plugins.kordex.plugins.KordExPluginHelper
 import dev.kordex.gradle.plugins.kordex.resolvers.gradle.GradleMetadata
 import kotlinx.serialization.json.int
@@ -49,6 +50,8 @@ class KordExPlugin @Inject constructor(
 		val versionsProvider = providers.versionsProvider(extension)
 		val packageProvider = providers.packageProvider(versionsProvider)
 		val configurationsProvider = providers.configurationsProvider(extension)
+
+		KspPluginHelper.apply(target)
 
 		target.checkTask(extension, versionsProvider, problemReporter)
 
@@ -105,9 +108,6 @@ class KordExPlugin @Inject constructor(
 							dep("${packages.base}:annotation-processor:${versions.kordEx}")
 						)
 					}
-
-// 					println("Configuration: $name (${deps.size} dependencies)")
-// 					deps.forEach { println(" -> ${it.group}:${it.name}:${it.version}") }
 
 					deps
 				}

@@ -55,5 +55,16 @@ operator fun Version?.compareTo(other: String?): Int {
 	return FlexVerComparator.compare(this!!.version, other!!)
 }
 
+// "2.1.0-20240820.163613-3"
+private val SNAPSHOT_REGEX = "\\d+\\.\\d+\\.\\d+-\\d+\\.\\d+-\\d+".toRegex()
+
+fun Version.normalize(): Version {
+	if (version.matches(SNAPSHOT_REGEX)) {
+		return Version(version.split("-", limit = 2).first() + "-SNAPSHOT")
+	}
+
+	return this
+}
+
 val Version.isKX2: Boolean
 	get() = version.startsWith("2.")

@@ -1,5 +1,6 @@
 import dev.kordex.gradle.plugins.docker.file.*
 import dev.kordex.gradle.plugins.docker.file.commands.*
+import org.gradle.kotlin.dsl.docker
 
 plugins {
 	kotlin("jvm")
@@ -20,6 +21,7 @@ kordEx {
 	module("extra-pluralkit")
 	module("func-mappings")
 
+	kordExVersion = "2.1.0-20240820.163613-3"
 	kordVersion = "latest"
 
 	bot {

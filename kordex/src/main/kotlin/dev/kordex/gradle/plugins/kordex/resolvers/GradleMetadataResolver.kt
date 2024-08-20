@@ -48,9 +48,9 @@ object GradleMetadataResolver {
 	}
 
 	fun kordEx(version: Version) =
-		kordEx(version.version)
+		kordEx(version.normalize().version)
 
-	fun kordEx(version: String) =
+	private fun kordEx(version: String) =
 		if (version.endsWith("-SNAPSHOT")) {
 			getKordExSnapshot(version)
 		} else {
@@ -58,24 +58,24 @@ object GradleMetadataResolver {
 		}
 
 	fun kord(version: Version) =
-		kord(version.version)
+		kord(version.normalize().version)
 
-	fun kord(version: String) =
+	private fun kord(version: String) =
 		if (version.endsWith("-SNAPSHOT")) {
 			getKordSnapshot(version)
 		} else {
 			getKordRelease(version)
 		}
 
-	fun getKordExRelease(version: String) = if (version.startsWith("2.")) {
+	private fun getKordExRelease(version: String) = if (version.startsWith("2.")) {
 		getMetadata(kordExReleasesUrlv2("$version/kord-extensions-$version.module"))
 	} else {
 		getMetadata(kordExReleasesUrlv1("$version/kord-extensions-$version.module"))
 	}
 
-	fun getKordRelease(version: String) = getMetadata(kordReleasesUrl("$version/kord-core-$version.module"))
+	private fun getKordRelease(version: String) = getMetadata(kordReleasesUrl("$version/kord-core-$version.module"))
 
-	fun getKordSnapshot(version: String) = runBlocking {
+	private fun getKordSnapshot(version: String) = runBlocking {
 		val metadata = MavenMetadataResolver.getKordSnapshot(version)
 		val currentVersion = metadata?.versioning?.snapshotVersions?.first()?.value
 			?: error("Unable to resolve Kord snapshot release metadata. Please report this!")
@@ -83,7 +83,7 @@ object GradleMetadataResolver {
 		getMetadata(kordSnapshotUrl("$version/kord-core-$currentVersion.module"))
 	}
 
-	fun getKordExSnapshot(version: String) = runBlocking {
+	private fun getKordExSnapshot(version: String) = runBlocking {
 		val metadata = MavenMetadataResolver.getKordExSnapshot(version)
 		val currentVersion = metadata?.versioning?.snapshotVersions?.first()?.value
 			?: error("Unable to resolve Kord Extensions snapshot release metadata. Please report this!")
