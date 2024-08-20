@@ -20,7 +20,9 @@ object GradleMetadataResolver {
 	private val logger = LoggerFactory.getLogger(GradleMetadataResolver::class.java)
 
 	private val client = HttpClient()
-	private val json = Json
+	private val json = Json {
+		ignoreUnknownKeys = true
+	}
 
 	private val cache: MutableMap<String, GradleMetadata?> = mutableMapOf()
 		@Synchronized get
