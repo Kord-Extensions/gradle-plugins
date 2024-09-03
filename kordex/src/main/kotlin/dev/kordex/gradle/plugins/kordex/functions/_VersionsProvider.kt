@@ -17,13 +17,13 @@ import org.gradle.api.provider.ProviderFactory
 fun ProviderFactory.versionsProvider(extension: KordExExtension) = provider {
 	val kordExVersion = if (!extension.kordExVersion.isPresent || extension.kordExVersion.orNull == "latest") {
 		latestKordExMetadata?.getCurrentVersion()
-			?: error("Unable to resolve Kord Extensions release metadata. Please report this!")
+			?: error("Unable to resolve latest Kord Extensions Maven metadata. Please report this!")
 	} else {
 		extension.kordExVersion.map(::Version).orNull
 	}!!
 
 	val kordExGradle = GradleMetadataResolver.kordEx(kordExVersion)
-		?: error("Unable to resolve Kord Extensions release metadata. Please report this!")
+		?: error("Unable to resolve Kord Extensions Gradle metadata for version $kordExVersion.")
 
 	val kordVersion = when (extension.kordVersion.orNull) {
 		null ->
