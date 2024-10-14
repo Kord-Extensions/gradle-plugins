@@ -36,7 +36,7 @@ dependencies {
 	detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
 	detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-libraries:1.23.6")
 
-	implementation(platform("io.ktor:ktor-bom:2.3.12"))
+	implementation(platform("io.ktor:ktor-bom:3.0.0"))
 	implementation("io.ktor:ktor-client-cio")
 	implementation("io.ktor:ktor-client-core")
 	implementation("io.ktor:ktor-client-content-negotiation")
