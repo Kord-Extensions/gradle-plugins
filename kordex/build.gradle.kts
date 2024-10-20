@@ -37,7 +37,7 @@ dependencies {
 	compileOnly(kotlin("gradle-plugin", version = "2.0.20"))
 
 	detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
-	detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-libraries:1.23.6")
+	detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-libraries:1.23.7")
 
 	implementation(platform("io.ktor:ktor-bom:2.3.12"))
 	implementation("io.ktor:ktor-client-cio")
