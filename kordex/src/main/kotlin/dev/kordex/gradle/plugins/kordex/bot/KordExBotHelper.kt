@@ -15,7 +15,9 @@ import java.util.*
 
 object KordExBotHelper {
 	fun process(target: Project, extension: KordExExtension, versions: VersionContainer) {
-		ApplicationPluginHelper.apply(target, extension)
+		if (extension.bot.mainClass.isPresent) {
+			ApplicationPluginHelper.apply(target, extension)
+		}
 
 		addGeneratedFiles(target, extension, versions)
 	}
