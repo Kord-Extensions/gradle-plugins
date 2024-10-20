@@ -1,13 +1,14 @@
 package template
 
 import dev.kord.core.entity.interaction.OptionValue
-import dev.kord.rest.builder.interaction.OptionsBuilder
 import dev.kordex.core.annotations.converters.Converter
 import dev.kordex.core.annotations.converters.ConverterType
 import dev.kordex.core.commands.Argument
 import dev.kordex.core.commands.CommandContext
+import dev.kordex.core.commands.OptionWrapper
 import dev.kordex.core.commands.converters.SingleConverter
 import dev.kordex.core.commands.converters.Validator
+import dev.kordex.core.i18n.types.Key
 import dev.kordex.parser.StringParser
 
 @Converter(
@@ -17,7 +18,7 @@ import dev.kordex.parser.StringParser
 class DummyConverter(
 	override var validator: Validator<String> = null,
 ) : SingleConverter<String>() {
-	override val signatureTypeString: String
+	override val signatureType: Key
 		get() = TODO("Not yet implemented")
 
 	override suspend fun parse(
@@ -28,7 +29,7 @@ class DummyConverter(
 		TODO("Not yet implemented")
 	}
 
-	override suspend fun toSlashOption(arg: Argument<*>): OptionsBuilder {
+	override suspend fun toSlashOption(arg: Argument<*>): OptionWrapper<*> {
 		TODO("Not yet implemented")
 	}
 
