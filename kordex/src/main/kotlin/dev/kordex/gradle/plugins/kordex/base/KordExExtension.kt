@@ -7,6 +7,7 @@
 package dev.kordex.gradle.plugins.kordex.base
 
 import dev.kordex.gradle.plugins.kordex.bot.KordExBotSettings
+import dev.kordex.gradle.plugins.kordex.i18n.KordExI18nSettings
 import dev.kordex.gradle.plugins.kordex.plugins.KordExPluginSettings
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.PropertyFactory
@@ -29,15 +30,23 @@ abstract class KordExExtension @Inject constructor(props: PropertyFactory) : Ext
 	abstract val modules: ListProperty<String>
 
 	internal val bot: KordExBotSettings = KordExBotSettings(props)
+	internal val i18n: KordExI18nSettings = KordExI18nSettings(props)
 	internal val plugin: KordExPluginSettings = KordExPluginSettings(props)
 
 	internal var hasBot = false
+	internal var hasI18n = false
 	internal var hasPlugin = false
 
 	fun bot(action: Action<KordExBotSettings>) {
 		action.execute(bot)
 
 		hasBot = true
+	}
+
+	fun i18n(action: Action<KordExI18nSettings>) {
+		action.execute(i18n)
+
+		hasI18n = true
 	}
 
 	fun plugin(action: Action<KordExPluginSettings>) {

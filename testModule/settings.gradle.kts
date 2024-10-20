@@ -1,6 +1,6 @@
 pluginManagement {
 	plugins {
-		val pluginVersion = "1.4.2"
+		val pluginVersion = "1.5.0"
 
 		kotlin("jvm") version "2.0.20"
 
@@ -12,8 +12,11 @@ pluginManagement {
     repositories {
         google()
         gradlePluginPortal()
-        mavenCentral()
 
+	    maven("https://releases-repo.kordex.dev")
+	    maven("https://snapshots-repo.kordex.dev")
+
+	    mavenCentral()
         mavenLocal()
     }
 }

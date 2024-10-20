@@ -6,18 +6,24 @@
 
 package dev.kordex.gradle.plugins.kordex
 
-import org.gradle.api.internal.provider.DefaultListProperty
-import org.gradle.api.internal.provider.DefaultProperty
 import org.gradle.api.internal.provider.PropertyFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 
-inline fun <reified T> PropertyFactory.single(): DefaultProperty<T> =
+inline fun <reified T> PropertyFactory.single(): Property<T> =
 	property(T::class.java)
 
-inline fun <reified T> PropertyFactory.list(): DefaultListProperty<T> =
+inline fun <reified T> PropertyFactory.list(): ListProperty<T> =
 	listProperty(T::class.java)
 
-fun PropertyFactory.boolean(): DefaultProperty<Boolean> =
+fun PropertyFactory.boolean(): Property<Boolean> =
 	property(Boolean::class.javaObjectType)
 
-fun PropertyFactory.booleanList(): DefaultListProperty<Boolean> =
+fun PropertyFactory.boolean(default: Boolean): Property<Boolean> =
+	property(Boolean::class.javaObjectType).convention(default)
+
+fun PropertyFactory.booleanList(): ListProperty<Boolean> =
 	listProperty(Boolean::class.javaObjectType)
+
+inline fun <reified T> PropertyFactory.single(default: T): Property<T> =
+	property(T::class.java).convention(default)
