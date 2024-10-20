@@ -36,6 +36,6 @@ dependencies {
 	detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
 	detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-libraries:1.23.6")
 
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.7.3")
 }
 
