@@ -65,7 +65,7 @@ object I18nHelper {
 			}
 		}
 
-		target.tasks.getByName("build") {
+		target.tasks.getByName("compileKotlin") {
 			dependsOn(generateTask)
 		}
 
