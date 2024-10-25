@@ -31,6 +31,7 @@ kordEx {
 	i18n {
 		classPackage = "template.i18n"
 		translationBundle = "template.strings"
+		publicVisibility = false
 	}
 }
 

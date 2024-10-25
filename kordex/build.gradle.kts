@@ -49,7 +49,7 @@ dependencies {
 	implementation("com.jcabi:jcabi-manifests:2.1.0")
 	implementation("com.squareup:kotlinpoet:1.18.1")
 	implementation("com.github.zafarkhaja:java-semver:0.10.2")
-	implementation("dev.kordex.i18n:i18n-generator:1.0.1")
+	implementation("dev.kordex.i18n:i18n-generator:1.0.3")
 	implementation("io.github.pdvrieze.xmlutil:core-jvm:0.86.3")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3")
 

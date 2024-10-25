@@ -19,4 +19,6 @@ class KordExI18nSettings(props: PropertyFactory) {
 	val className: Property<String> = props.single("Translations")
 	val configureSourceSet: Property<Boolean> = props.boolean(true)
 	val outputDirectory: Property<File> = props.single()
+
+	val publicVisibility: Property<Boolean> = props.boolean(true)
 }

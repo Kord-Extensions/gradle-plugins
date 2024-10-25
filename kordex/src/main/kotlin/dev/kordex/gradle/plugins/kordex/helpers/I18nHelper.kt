@@ -58,7 +58,8 @@ object I18nHelper {
 					bundle = bundle.joinToString("."),
 					allProps = props,
 					className = extension.i18n.className.get(),
-					classPackage = extension.i18n.classPackage.get()
+					classPackage = extension.i18n.classPackage.get(),
+					publicVisibility = extension.i18n.publicVisibility.get()
 				)
 
 				translationsClass.writeTo(outputDirectory)
