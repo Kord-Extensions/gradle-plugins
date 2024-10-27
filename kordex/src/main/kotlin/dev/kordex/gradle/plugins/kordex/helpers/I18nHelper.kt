@@ -11,6 +11,7 @@ import dev.kordex.i18n.generator.TranslationsClass
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.*
+import java.nio.charset.MalformedInputException
 import java.nio.file.Files
 import java.util.Properties
 
@@ -45,24 +46,31 @@ object I18nHelper {
 			inputs.file(inputFile)
 
 			doLast {
-				val props = Properties()
+				try {
+					val props = Properties()
 
-				props.load(
-					Files.newBufferedReader(
-						inputFile.toPath(),
-						Charsets.UTF_8
+					props.load(
+						Files.newBufferedReader(
+							inputFile.toPath(),
+							Charsets.UTF_8
+						)
 					)
-				)
 
-				val translationsClass = TranslationsClass(
-					bundle = bundle.joinToString("."),
-					allProps = props,
-					className = extension.i18n.className.get(),
-					classPackage = extension.i18n.classPackage.get(),
-					publicVisibility = extension.i18n.publicVisibility.get()
-				)
+					val translationsClass = TranslationsClass(
+						bundle = bundle.joinToString("."),
+						allProps = props,
+						className = extension.i18n.className.get(),
+						classPackage = extension.i18n.classPackage.get(),
+						publicVisibility = extension.i18n.publicVisibility.get()
+					)
 
-				translationsClass.writeTo(outputDirectory)
+					translationsClass.writeTo(outputDirectory)
+				} catch (e: MalformedInputException) {
+					error(
+						"Malformed input exception: ${e.message} - " +
+							"Check that your translation bundle is UTF-8 encoded!",
+					)
+				}
 			}
 		}
 
