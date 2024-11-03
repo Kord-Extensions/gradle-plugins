@@ -6,12 +6,14 @@
 
 package dev.kordex.gradle.plugins.kordex.functions
 
+import dev.kordex.gradle.plugins.kordex.InternalAPI
 import dev.kordex.gradle.plugins.kordex.PackageContainer
 import dev.kordex.gradle.plugins.kordex.VersionContainer
 import dev.kordex.gradle.plugins.kordex.isKX2
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 
+@InternalAPI
 fun ProviderFactory.packageProvider(versionsProvider: Provider<VersionContainer>) = provider {
 	val versions = versionsProvider.get()
 

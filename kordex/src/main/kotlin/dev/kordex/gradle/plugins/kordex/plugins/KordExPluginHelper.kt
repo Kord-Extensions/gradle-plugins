@@ -8,6 +8,7 @@ package dev.kordex.gradle.plugins.kordex.plugins
 
 import com.github.zafarkhaja.semver.ParseException
 import com.github.zafarkhaja.semver.expr.ExpressionParser
+import dev.kordex.gradle.plugins.kordex.InternalAPI
 import dev.kordex.gradle.plugins.kordex.base.KordExExtension
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -18,6 +19,7 @@ import org.gradle.api.tasks.bundling.Tar
 import org.gradle.kotlin.dsl.*
 import java.util.*
 
+@InternalAPI
 object KordExPluginHelper {
 	fun process(target: Project, extension: KordExExtension) {
 		validate(target, extension)

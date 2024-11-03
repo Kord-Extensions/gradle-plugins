@@ -4,8 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+@file:OptIn(InternalAPI::class)
+
 package dev.kordex.gradle.plugins.kordex.i18n
 
+import dev.kordex.gradle.plugins.kordex.InternalAPI
 import dev.kordex.gradle.plugins.kordex.boolean
 import dev.kordex.gradle.plugins.kordex.single
 import org.gradle.api.internal.provider.PropertyFactory

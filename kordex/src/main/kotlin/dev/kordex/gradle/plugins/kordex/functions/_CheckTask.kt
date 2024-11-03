@@ -6,6 +6,7 @@
 
 package dev.kordex.gradle.plugins.kordex.functions
 
+import dev.kordex.gradle.plugins.kordex.InternalAPI
 import dev.kordex.gradle.plugins.kordex.VersionContainer
 import dev.kordex.gradle.plugins.kordex.base.KordExExtension
 import org.gradle.api.Project
@@ -17,6 +18,7 @@ import org.gradle.api.provider.Provider
 private val kotlinJarRegex = "kotlin-gradle-plugin-(.+)-gradle\\d+\\.jar".toRegex()
 
 @Suppress("UnstableApiUsage", "StringLiteralDuplication")
+@InternalAPI
 fun Project.checkTask(
 	extension: KordExExtension,
 	versionsProvider: Provider<VersionContainer>,

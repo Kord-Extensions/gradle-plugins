@@ -6,7 +6,8 @@
 
 package dev.kordex.gradle.plugins.kordex.helpers
 
-import dev.kordex.gradle.plugins.kordex.base.KordExExtension
+import dev.kordex.gradle.plugins.kordex.InternalAPI
+import dev.kordex.gradle.plugins.kordex.i18n.KordExI18nSettings
 import dev.kordex.i18n.generator.TranslationsClass
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
@@ -15,11 +16,12 @@ import java.nio.charset.MalformedInputException
 import java.nio.file.Files
 import java.util.Properties
 
+@InternalAPI
 object I18nHelper {
-	fun apply(target: Project, extension: KordExExtension) {
+	fun apply(target: Project, extension: KordExI18nSettings) {
 		validate(extension)
 
-		var bundle = extension.i18n.translationBundle.get().split(".")
+		var bundle = extension.translationBundle.get().split(".")
 
 		if (bundle.size == 1) {
 			bundle = bundle + "strings"
@@ -36,7 +38,7 @@ object I18nHelper {
 			error("Cannot find translation bundle file: ${inputFile.absolutePath}")
 		}
 
-		val outputDirectory = extension.i18n.outputDirectory.orNull
+		val outputDirectory = extension.outputDirectory.orNull
 			?: target.layout.buildDirectory.file("generated/kordex/main/kotlin/").get().asFile
 
 		val generateTask = target.tasks.create("generateTranslationsClass") {
@@ -59,9 +61,9 @@ object I18nHelper {
 					val translationsClass = TranslationsClass(
 						bundle = bundle.joinToString("."),
 						allProps = props,
-						className = extension.i18n.className.get(),
-						classPackage = extension.i18n.classPackage.get(),
-						publicVisibility = extension.i18n.publicVisibility.get()
+						className = extension.className.get(),
+						classPackage = extension.classPackage.get(),
+						publicVisibility = extension.publicVisibility.get()
 					)
 
 					translationsClass.writeTo(outputDirectory)
@@ -78,7 +80,7 @@ object I18nHelper {
 			dependsOn(generateTask)
 		}
 
-		if (extension.i18n.configureSourceSet.get()) {
+		if (extension.configureSourceSet.get()) {
 			sourceSet {
 				java {
 					srcDir(outputDirectory)
@@ -92,10 +94,10 @@ object I18nHelper {
 		}
 	}
 
-	fun validate(extension: KordExExtension) {
+	fun validate(extension: KordExI18nSettings) {
 		val requiredProperties = mapOf(
-			"i18n -> classPackage" to extension.i18n.classPackage,
-			"i18n -> translationBundle" to extension.i18n.translationBundle,
+			"i18n -> classPackage" to extension.classPackage,
+			"i18n -> translationBundle" to extension.translationBundle,
 		)
 
 		requiredProperties.forEach { (key, value) ->

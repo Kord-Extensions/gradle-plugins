@@ -6,6 +6,7 @@
 
 package dev.kordex.gradle.plugins.kordex.bot
 
+import dev.kordex.gradle.plugins.kordex.InternalAPI
 import dev.kordex.gradle.plugins.kordex.VersionContainer
 import dev.kordex.gradle.plugins.kordex.base.KordExExtension
 import dev.kordex.gradle.plugins.kordex.helpers.ApplicationPluginHelper
@@ -13,6 +14,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import java.util.*
 
+@InternalAPI
 object KordExBotHelper {
 	fun process(target: Project, extension: KordExExtension, versions: VersionContainer) {
 		if (extension.bot.mainClass.isPresent) {

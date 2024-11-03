@@ -6,11 +6,13 @@
 
 package dev.kordex.gradle.plugins.kordex.helpers
 
+import dev.kordex.gradle.plugins.kordex.InternalAPI
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.*
 import org.slf4j.LoggerFactory
 
+@InternalAPI
 object KspPluginHelper {
 	private val logger = LoggerFactory.getLogger(KspPluginHelper::class.java)
 

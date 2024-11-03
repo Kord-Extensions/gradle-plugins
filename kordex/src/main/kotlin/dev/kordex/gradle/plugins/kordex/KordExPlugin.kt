@@ -5,6 +5,7 @@
  */
 
 @file:Suppress("StringLiteralDuplication")
+@file:OptIn(InternalAPI::class)
 
 package dev.kordex.gradle.plugins.kordex
 
@@ -146,7 +147,7 @@ class KordExPlugin @Inject constructor(
 					)
 				}
 
-				I18nHelper.apply(target, extension)
+				I18nHelper.apply(target, extension.i18n)
 			}
 
 			if (extension.hasPlugin) {

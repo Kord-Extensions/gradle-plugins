@@ -6,6 +6,7 @@
 
 package dev.kordex.gradle.plugins.kordex.functions
 
+import dev.kordex.gradle.plugins.kordex.InternalAPI
 import dev.kordex.gradle.plugins.kordex.Version
 import dev.kordex.gradle.plugins.kordex.VersionContainer
 import dev.kordex.gradle.plugins.kordex.base.KordExExtension
@@ -14,6 +15,7 @@ import dev.kordex.gradle.plugins.kordex.base.latestKordMetadata
 import dev.kordex.gradle.plugins.kordex.resolvers.GradleMetadataResolver
 import org.gradle.api.provider.ProviderFactory
 
+@InternalAPI
 fun ProviderFactory.versionsProvider(extension: KordExExtension) = provider {
 	val kordExVersion = if (!extension.kordExVersion.isPresent || extension.kordExVersion.orNull == "latest") {
 		latestKordExMetadata?.getCurrentVersion()

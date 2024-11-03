@@ -6,9 +6,11 @@
 
 package dev.kordex.gradle.plugins.kordex.functions
 
+import dev.kordex.gradle.plugins.kordex.InternalAPI
 import dev.kordex.gradle.plugins.kordex.base.KordExExtension
 import org.gradle.api.provider.ProviderFactory
 
+@InternalAPI
 fun ProviderFactory.configurationsProvider(extension: KordExExtension) = provider {
 	if (extension.configurations.isPresent && extension.configurations.get().isNotEmpty()) {
 		extension.configurations.get().toTypedArray()

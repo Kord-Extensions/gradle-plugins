@@ -6,6 +6,7 @@
 
 package dev.kordex.gradle.plugins.kordex.helpers
 
+import dev.kordex.gradle.plugins.kordex.InternalAPI
 import dev.kordex.gradle.plugins.kordex.base.KordExExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPlugin
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import kotlin.jvm.java
 
+@InternalAPI
 object ApplicationPluginHelper {
 	private val logger = LoggerFactory.getLogger(ApplicationPluginHelper::class.java)
 
