@@ -32,6 +32,7 @@ kordEx {
 		classPackage = "template.i18n"
 		translationBundle = "template.strings"
 		publicVisibility = false
+		camelCaseNames = false
 	}
 }
 

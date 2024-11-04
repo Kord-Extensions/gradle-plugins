@@ -38,7 +38,7 @@ fun List<String>.normalizeModules(kordExVersion: Version, log: Boolean = true): 
 			if (it in v1to2) {
 				if (log) {
 					logger.warn(
-						"WARNING | Module '$it' was specified, but the v2 version is called '${v1to2[it]}'. " +
+						"WARNING: Module '$it' was specified, but the v2 version is called '${v1to2[it]}'. " +
 							"This will become an error in later versions of the KordEx plugin."
 					)
 				}
@@ -53,7 +53,7 @@ fun List<String>.normalizeModules(kordExVersion: Version, log: Boolean = true): 
 			if (it in v2tov1) {
 				if (log) {
 					logger.warn(
-						"WARNING | Module '$it' was specified, but the v1 version is called '${v2tov1[it]}'. " +
+						"WARNING: Module '$it' was specified, but the v1 version is called '${v2tov1[it]}'. " +
 							"This will become an error in later versions of the KordEx plugin."
 					)
 				}

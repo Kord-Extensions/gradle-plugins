@@ -58,12 +58,14 @@ object I18nHelper {
 						)
 					)
 
+					@Suppress("DEPRECATION")
 					val translationsClass = TranslationsClass(
 						bundle = bundle.joinToString("."),
 						allProps = props,
 						className = extension.className.get(),
 						classPackage = extension.classPackage.get(),
-						publicVisibility = extension.publicVisibility.get()
+						publicVisibility = extension.publicVisibility.get(),
+						splitToCamelCase = extension.camelCaseNames.get(),
 					)
 
 					translationsClass.writeTo(outputDirectory)

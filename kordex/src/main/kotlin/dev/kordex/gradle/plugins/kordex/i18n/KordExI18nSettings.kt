@@ -24,4 +24,9 @@ class KordExI18nSettings(props: PropertyFactory) {
 	val outputDirectory: Property<File> = props.single()
 
 	val publicVisibility: Property<Boolean> = props.boolean(true)
+
+	@Deprecated(
+		"This option is provided for compatibility with old, un-migrated code, and will be removed in a later version."
+	)
+	val camelCaseNames: Property<Boolean> = props.boolean(true)
 }

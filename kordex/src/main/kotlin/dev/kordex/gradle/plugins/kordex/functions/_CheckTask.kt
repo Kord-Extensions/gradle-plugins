@@ -51,7 +51,7 @@ fun Project.checkTask(
 			val kotlinPlugin = pluginManager.findPlugin("org.jetbrains.kotlin.jvm")
 
 			if (kotlinPlugin == null) {
-				logger.warn("WARNING | Unable to find the Kotlin JVM plugin. Is it applied?")
+				logger.warn("WARNING: Unable to find the Kotlin JVM plugin. Is it applied?")
 				return@doLast
 			}
 
@@ -66,7 +66,7 @@ fun Project.checkTask(
 
 			if (kotlinJarName == null) {
 				logger.warn(
-					"WARNING | Kotlin JVM plugin applied, but the JAR couldn't be found. " +
+					"WARNING: Kotlin JVM plugin applied, but the JAR couldn't be found. " +
 						"Found ${classpathJars.size} JARs:"
 				)
 
