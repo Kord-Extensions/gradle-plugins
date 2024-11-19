@@ -8,6 +8,7 @@ package dev.kordex.gradle.plugins.kordex.helpers
 
 import dev.kordex.gradle.plugins.kordex.InternalAPI
 import dev.kordex.gradle.plugins.kordex.i18n.KordExI18nSettings
+import dev.kordex.i18n.generator.MESSAGE_FORMAT_VERSIONS
 import dev.kordex.i18n.generator.TranslationsClass
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
@@ -66,6 +67,7 @@ object I18nHelper {
 						classPackage = extension.classPackage.get(),
 						publicVisibility = extension.publicVisibility.get(),
 						splitToCamelCase = extension.camelCaseNames.get(),
+						messageFormatVersion = extension.messageFormatVersion.get(),
 					)
 
 					translationsClass.writeTo(outputDirectory)
@@ -106,6 +108,13 @@ object I18nHelper {
 			if (!value.isPresent) {
 				error("Required property $key has not been set.")
 			}
+		}
+
+		if (extension.messageFormatVersion.get() !in MESSAGE_FORMAT_VERSIONS) {
+			error(
+				"Invalid message format version ${extension.messageFormatVersion} - " +
+					"must be one of ${MESSAGE_FORMAT_VERSIONS.joinToString()}"
+			)
 		}
 	}
 }

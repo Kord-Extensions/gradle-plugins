@@ -23,6 +23,7 @@ class KordExI18nSettings(props: PropertyFactory) {
 	val configureSourceSet: Property<Boolean> = props.boolean(true)
 	val outputDirectory: Property<File> = props.single()
 
+	val messageFormatVersion: Property<Int> = props.single<Int>().convention(1)
 	val publicVisibility: Property<Boolean> = props.boolean(true)
 
 	@Deprecated(

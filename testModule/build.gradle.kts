@@ -21,7 +21,7 @@ kordEx {
 	module("extra-pluralkit")
 	module("func-mappings")
 
-	kordExVersion = "2.3.0-SNAPSHOT"
+	kordExVersion = "2.3.1-SNAPSHOT"
 	kordVersion = "latest"
 
 	bot {
@@ -32,7 +32,7 @@ kordEx {
 		classPackage = "template.i18n"
 		translationBundle = "template.strings"
 		publicVisibility = false
-		camelCaseNames = false
+		messageFormatVersion = 2
 	}
 }
 
