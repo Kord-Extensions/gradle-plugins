@@ -7,8 +7,7 @@
 package dev.kordex.gradle.plugins.kordex
 
 const val CENTRAL_BASE = "https://repo1.maven.org/maven2"
-const val OSS_BASE = "https://oss.sonatype.org/content/repositories/snapshots"
-const val S01_BASE = "https://s01.oss.sonatype.org/content/repositories/snapshots"
+const val KORD_SNAPSHOTS = "https://repo.kord.dev/snapshots"
 
 const val KORDEX_RELEASES = "https://releases-repo.kordex.dev"
 const val KORDEX_SNAPSHOTS = "https://snapshots-repo.kordex.dev"
@@ -20,7 +19,7 @@ const val KORDEX_RELEASES_BASE_V2 = "$KORDEX_RELEASES/dev/kordex/kord-extensions
 const val KORDEX_SNAPSHOTS_BASE_V2 = "$KORDEX_SNAPSHOTS/dev/kordex/kord-extensions"
 
 const val KORD_RELEASES_BASE = "$CENTRAL_BASE/dev/kord/kord-core"
-const val KORD_SNAPSHOTS_BASE = "$OSS_BASE/dev/kord/kord-core"
+const val KORD_SNAPSHOTS_BASE = "$KORD_SNAPSHOTS/dev/kord/kord-core"
 
 fun kordExReleasesUrlv1(path: String) =
 	"$KORDEX_RELEASES_BASE_V1/$path"

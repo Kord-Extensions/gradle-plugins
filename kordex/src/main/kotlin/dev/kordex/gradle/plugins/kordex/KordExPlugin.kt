@@ -172,8 +172,7 @@ class KordExPlugin @Inject constructor(
 
 		target.repo(KORDEX_RELEASES)
 		target.repo(KORDEX_SNAPSHOTS)
-		target.repo(S01_BASE)
-		target.repo(OSS_BASE)
+		target.repo(KORD_SNAPSHOTS)
 
 		val modules = extension.modules.get().normalizeModules(kordExVersion, log = false)
 
