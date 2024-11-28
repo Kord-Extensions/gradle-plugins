@@ -37,12 +37,10 @@ import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
 class KordExPlugin @Inject constructor(
-	problems: Problems,
+	val problems: Problems,
 	val dependencies: DependencyFactory,
 	val providers: ProviderFactory,
 ) : Plugin<Project> {
-	val problemReporter = problems.forNamespace("dev.kordex")
-
 	@Suppress("UnnecessaryParentheses")
 	override fun apply(target: Project) {
 		val extension = target.extensions.create<KordExExtension>("kordEx").apply {
@@ -55,7 +53,7 @@ class KordExPlugin @Inject constructor(
 
 		KspPluginHelper.apply(target)
 
-		target.checkTask(extension, versionsProvider, problemReporter)
+		target.checkTask(extension, versionsProvider, problems.reporter)
 
 		target.configurations.all {
 			dependencies.addAllLater(
@@ -120,7 +118,7 @@ class KordExPlugin @Inject constructor(
 			val versions = versionsProvider.get()
 
 			if (extension.hasBot && extension.hasPlugin) {
-				problemReporter.throwing {
+				problems.reporter.throwing {
 					withException(
 						RuntimeException(
 							"Project is both bot and plugin - if you need both in the same project, split them into " +
@@ -128,7 +126,7 @@ class KordExPlugin @Inject constructor(
 						)
 					)
 
-					id("both-bot-and-plugin", "Project is both bot and plugin")
+					id("dev.kordex.gradle.plugins.kordex.both-bot-and-plugin", "Project is both bot and plugin")
 					details("Project ${target.name} cannot be both a bot and a plugin")
 					solution("If you need both in the same project, split them into separate Gradle subprojects")
 					severity(Severity.ERROR)

@@ -87,7 +87,7 @@ fun Project.checkTask(
 					)
 
 					problemReporter.reporting {
-						id("kotlin-version", "Incompatible Kotlin plugin found")
+						id("dev.kordex.gradle.plugins.kordex.kotlin-version", "Incompatible Kotlin plugin found")
 
 						details(
 							"Incompatible Kotlin plugin found - Kord Extensions version " +
@@ -106,7 +106,10 @@ fun Project.checkTask(
 							)
 						)
 
-						id("kotlin-version", "Incompatible Kotlin plugin version found")
+						id(
+							"dev.kordex.gradle.plugins.kordex.kotlin-version",
+							"Incompatible Kotlin plugin version found"
+						)
 
 						details(
 							"Incompatible Kotlin plugin found - Kord Extensions version " +

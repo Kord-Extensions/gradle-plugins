@@ -2,6 +2,8 @@
 
 This repository contains Gradle plugins intended for use with Kord Extensions.
 
+**All plugins require Gradle 8.11 or later.**
+
 # Contents
 
 - `docker/` - Docker Gradle plugin for Dockerfile generation.

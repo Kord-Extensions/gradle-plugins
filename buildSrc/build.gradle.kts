@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-	implementation(kotlin("gradle-plugin", version = "1.9.23"))
-	implementation(kotlin("serialization", version = "1.9.23"))
+	implementation(kotlin("gradle-plugin", version = "2.0.20"))
+	implementation(kotlin("serialization", version = "2.0.20"))
 
 	implementation("dev.yumi", "yumi-gradle-licenser", "1.2.0")
 	implementation("io.gitlab.arturbosch.detekt", "detekt-gradle-plugin", "1.23.6")
