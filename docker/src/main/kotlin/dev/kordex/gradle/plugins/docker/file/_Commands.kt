@@ -119,6 +119,15 @@ fun CommandList.label(body: LabelCommand.() -> Unit) {
 }
 
 @DockerfileCommandDsl
+fun CommandList.label(key: String, value: String) {
+	val command = LabelCommand()
+
+	command.label(key, value)
+
+	add(command)
+}
+
+@DockerfileCommandDsl
 fun CommandList.onBuild(body: CommandList.() -> Unit) {
 	val commands: CommandList = mutableListOf()
 

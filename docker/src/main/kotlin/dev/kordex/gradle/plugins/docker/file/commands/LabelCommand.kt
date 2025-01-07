@@ -20,8 +20,10 @@ class LabelCommand : DockerfileCommand() {
 	override fun toString(): String = buildString {
 		append("$keyword ")
 
-		labels.toList().joinToString(" ") { (key, value) ->
-			"$key=\"${value.replace("\"", "\\\"")}\""
-		}
+		append(
+			labels.entries.joinToString(" ") { (key, value) ->
+				"\"${key.replace("\"", "\\\"")}\"=\"${value.replace("\"", "\\\"")}\""
+			}
+		)
 	}
 }
