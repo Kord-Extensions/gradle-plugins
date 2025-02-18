@@ -14,8 +14,10 @@ class EnvCommand(val variables: Map<String, String>) : DockerfileCommand() {
 	override fun toString(): String = buildString {
 		append("$keyword ")
 
-		variables.toList().joinToString(" ") { (key, value) ->
-			"$key=\"${value.replace("\"", "\\\"")}\""
-		}
+		append(
+			variables.toList().joinToString(" ") { (key, value) ->
+				"$key=\"${value.replace("\"", "\\\"")}\""
+			}
+		)
 	}
 }
