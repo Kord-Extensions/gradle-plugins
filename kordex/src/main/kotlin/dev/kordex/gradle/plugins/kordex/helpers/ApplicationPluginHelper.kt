@@ -40,7 +40,7 @@ object ApplicationPluginHelper {
 
 		val sourceSets = target.extensions.getByType<SourceSetContainer>()
 
-		target.tasks.create<JavaExec>("dev") {
+		target.tasks.register<JavaExec>("dev") {
 			group = "application"
 			description = "Run the configured Kord Extensions bot in development mode"
 

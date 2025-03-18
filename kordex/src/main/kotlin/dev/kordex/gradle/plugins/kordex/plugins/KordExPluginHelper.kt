@@ -15,6 +15,7 @@ import org.gradle.api.Task
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.kotlin.dsl.*
 import java.util.*
@@ -102,10 +103,10 @@ object KordExPluginHelper {
 		}
 	}
 
-	fun metadataTask(target: Project, extension: KordExExtension): Task {
+	fun metadataTask(target: Project, extension: KordExExtension): TaskProvider<Task> {
 		val outputFile = target.layout.buildDirectory.file("generated/plugin.properties")
 
-		return target.tasks.create("generatePluginMetadata") {
+		return target.tasks.register("generatePluginMetadata") {
 			group = "generation"
 			description = "Generate plugin metadata."
 

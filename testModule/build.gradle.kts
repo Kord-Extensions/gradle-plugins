@@ -18,7 +18,7 @@ repositories {
 
 kordEx {
 	module("data-mongodb")
-	module("extra-pluralkit")
+	module("pluralkit")
 	module("func-mappings")
 
 	kordExVersion = "2.3.1-SNAPSHOT"

@@ -9,7 +9,10 @@
 
 package dev.kordex.gradle.plugins.kordex
 
-import dev.kordex.gradle.plugins.kordex.base.*
+import dev.kordex.gradle.plugins.kordex.base.KordExExtension
+import dev.kordex.gradle.plugins.kordex.base.latestMongoDBMetadata
+import dev.kordex.gradle.plugins.kordex.base.normalizeModules
+import dev.kordex.gradle.plugins.kordex.base.repo
 import dev.kordex.gradle.plugins.kordex.bot.KordExBotHelper
 import dev.kordex.gradle.plugins.kordex.functions.checkTask
 import dev.kordex.gradle.plugins.kordex.functions.configurationsProvider
@@ -82,7 +85,7 @@ class KordExPlugin @Inject constructor(
 							}
 						}
 
-						extension.modules.get().normalizeModules(versions.kordEx).forEach { module ->
+						extension.modules.get().normalizeModules(versions.kordEx, problems.reporter).forEach { module ->
 							deps.add(
 								dep("${packages.module}:$module:${versions.kordEx}")
 									.exclude(packages.base, "kord-extensions")
@@ -118,15 +121,10 @@ class KordExPlugin @Inject constructor(
 			val versions = versionsProvider.get()
 
 			if (extension.hasBot && extension.hasPlugin) {
-				problems.reporter.throwing {
-					withException(
-						RuntimeException(
-							"Project is both bot and plugin - if you need both in the same project, split them into " +
-								"separate Gradle subprojects"
-						)
-					)
-
-					id("dev.kordex.gradle.plugins.kordex.both-bot-and-plugin", "Project is both bot and plugin")
+				problems.reporter.throwing(
+					RuntimeException("Project is both a bot and a plugin"),
+					ProblemIds.ProjectBothBotAndPlugin,
+				) {
 					details("Project ${target.name} cannot be both a bot and a plugin")
 					solution("If you need both in the same project, split them into separate Gradle subprojects")
 					severity(Severity.ERROR)
@@ -172,7 +170,7 @@ class KordExPlugin @Inject constructor(
 		target.repo(KORDEX_SNAPSHOTS)
 		target.repo(KORD_SNAPSHOTS)
 
-		val modules = extension.modules.get().normalizeModules(kordExVersion, log = false)
+		val modules = extension.modules.get().normalizeModules(kordExVersion, problems.reporter, log = false)
 
 		if (MAPPINGS_V1 in modules || MAPPINGS_V2 in modules) {
 			target.repo("https://maven.fabricmc.net")
@@ -187,33 +185,43 @@ class KordExPlugin @Inject constructor(
 		val javaVersion = if (extension.jvmTarget.isPresent) {
 			extension.jvmTarget.get()
 		} else {
-			val versionElement = kordExGradle
-				.variants
-				.first { it.name == "apiElements" }
-				.attributes?.get("org.gradle.jvm.version")
-				?: kordExGradle
-					.variants
-					.first { it.name == "runtimeElements" }
-					.attributes?.get("org.gradle.jvm.version")
+			// NOTE: Ordinal starts from 0, so we need to add 1 to get the right number.
+			target.extensions.getByType<JavaPluginExtension>().targetCompatibility.ordinal + 1
+		}
 
-			versionElement?.jsonPrimitive?.int
+		val versionElement = kordExGradle
+			.variants
+			.first { it.name == "apiElements" }
+			.attributes?.get("org.gradle.jvm.version")
+			?: kordExGradle
+				.variants
+				.first { it.name == "runtimeElements" }
+				.attributes?.get("org.gradle.jvm.version")
+
+		val kordExJavaVersion = versionElement?.jsonPrimitive?.int
+
+		if (kordExJavaVersion != null && kordExJavaVersion > javaVersion) {
+			problems.reporter.throwing(
+				RuntimeException("Target Java version is lower than Kord Extensions' minimum required java version"),
+				ProblemIds.JavaVersionTooOld,
+			) {
+				details("Java version $javaVersion is lower than $kordExJavaVersion")
+				solution("Configure your project to use Java $kordExJavaVersion or later")
+				severity(Severity.ERROR)
+			}
 		}
 
 		target.tasks.withType<KotlinCompile> {
 			compilerOptions {
 				optIn.add("kotlin.RequiresOptIn")
 
-				if (javaVersion != null) {
-					jvmTarget.set(JvmTarget.fromTarget(javaVersion.toString()))
-				}
+				jvmTarget.set(JvmTarget.fromTarget(javaVersion.toString()))
 			}
 		}
 
 		target.extensions.configure<JavaPluginExtension> {
-			if (javaVersion != null) {
-				sourceCompatibility = JavaVersion.toVersion(javaVersion.toString())
-				targetCompatibility = JavaVersion.toVersion(javaVersion.toString())
-			}
+			sourceCompatibility = JavaVersion.toVersion(javaVersion.toString())
+			targetCompatibility = JavaVersion.toVersion(javaVersion.toString())
 		}
 	}
 }

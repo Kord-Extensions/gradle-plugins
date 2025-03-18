@@ -4,14 +4,21 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package dev.kordex.gradle.plugins.kordex.base
 
 import dev.kordex.gradle.plugins.kordex.MAPPINGS_V1
 import dev.kordex.gradle.plugins.kordex.MAPPINGS_V2
 import dev.kordex.gradle.plugins.kordex.MONGODB_V1
 import dev.kordex.gradle.plugins.kordex.MONGODB_V2
+import dev.kordex.gradle.plugins.kordex.ProblemIds
 import dev.kordex.gradle.plugins.kordex.Version
 import dev.kordex.gradle.plugins.kordex.isKX2
+import org.gradle.api.problems.Problem
+import org.gradle.api.problems.ProblemReporter
+import org.gradle.api.problems.Severity
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 val v1to2 = mapOf(
@@ -28,20 +35,23 @@ val v1to2 = mapOf(
 	"extra-welcome" to "func-welcome",
 )
 
-val v2tov1 = v1to2.entries.map { (k, v) -> v to k }.toMap()
+val v2tov1 = v1to2.entries.associate { (k, v) -> v to k }
 
-val logger = LoggerFactory.getLogger("kordex.modules")
+val logger: Logger = LoggerFactory.getLogger("kordex.modules")
 
-fun List<String>.normalizeModules(kordExVersion: Version, log: Boolean = true): List<String> =
-	if (kordExVersion.isKX2) {
+fun List<String>.normalizeModules(kordExVersion: Version, reporter: ProblemReporter, log: Boolean = true): List<String> {
+	val problems = mutableListOf<Problem>()
+
+	val result = if (kordExVersion.isKX2) {
 		map {
 			if (it in v1to2) {
-				if (log) {
-					logger.warn(
-						"WARNING: Module '$it' was specified, but the v2 version is called '${v1to2[it]}'. " +
-							"This will become an error in later versions of the KordEx plugin."
-					)
-				}
+				problems.add(
+					reporter.create(ProblemIds.WrongV2ModuleName) {
+						details("v1 module '$it' was specified, but the v2 version is '${v1to2[it]}'")
+						solution("Specify '${v1to2[it]}' instead of '$it'")
+						severity(Severity.ERROR)
+					}
+				)
 
 				v1to2[it]!!
 			} else {
@@ -51,12 +61,13 @@ fun List<String>.normalizeModules(kordExVersion: Version, log: Boolean = true): 
 	} else {
 		map {
 			if (it in v2tov1) {
-				if (log) {
-					logger.warn(
-						"WARNING: Module '$it' was specified, but the v1 version is called '${v2tov1[it]}'. " +
-							"This will become an error in later versions of the KordEx plugin."
-					)
-				}
+				problems.add(
+					reporter.create(ProblemIds.WrongV1ModuleName) {
+						details("v2 module '$it' was specified, but the v1 version is '${v2tov1[it]}'")
+						solution("Specify '${v2tov1[it]}' instead of '$it'")
+						severity(Severity.ERROR)
+					}
+				)
 
 				v2tov1[it]!!
 			} else {
@@ -64,3 +75,13 @@ fun List<String>.normalizeModules(kordExVersion: Version, log: Boolean = true): 
 			}
 		}
 	}
+
+	if (log && problems.isNotEmpty()) {
+		reporter.throwing(
+			RuntimeException("Incorrect module names detected"),
+			problems
+		)
+	}
+
+	return result
+}

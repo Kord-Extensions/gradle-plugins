@@ -7,6 +7,7 @@
 package dev.kordex.gradle.plugins.kordex.functions
 
 import dev.kordex.gradle.plugins.kordex.InternalAPI
+import dev.kordex.gradle.plugins.kordex.ProblemIds
 import dev.kordex.gradle.plugins.kordex.VersionContainer
 import dev.kordex.gradle.plugins.kordex.base.KordExExtension
 import org.gradle.api.Project
@@ -81,14 +82,7 @@ fun Project.checkTask(
 
 			if (!version.equals(wantedVersion, true)) {
 				if (extension.ignoreIncompatibleKotlinVersion.get()) {
-					logger.warn(
-						"Incompatible Kotlin plugin found - Kord Extensions version " +
-							"${kordExGradle.component.version} expects Kotlin plugin version $wantedVersion"
-					)
-
-					problemReporter.reporting {
-						id("dev.kordex.gradle.plugins.kordex.kotlin-version", "Incompatible Kotlin plugin found")
-
+					problemReporter.report(ProblemIds.IncompatibleKotlinVersion) {
 						details(
 							"Incompatible Kotlin plugin found - Kord Extensions version " +
 								"${kordExGradle.component.version} expects Kotlin plugin version $wantedVersion"
@@ -98,19 +92,10 @@ fun Project.checkTask(
 						severity(Severity.WARNING)
 					}
 				} else {
-					problemReporter.throwing {
-						withException(
-							RuntimeException(
-								"Incompatible Kotlin plugin version found - Kord Extensions version " +
-									"${kordExGradle.component.version} expects Kotlin plugin version $wantedVersion"
-							)
-						)
-
-						id(
-							"dev.kordex.gradle.plugins.kordex.kotlin-version",
-							"Incompatible Kotlin plugin version found"
-						)
-
+					problemReporter.throwing(
+						RuntimeException("Incompatible Kotlin plugin version: $version"),
+						ProblemIds.IncompatibleKotlinVersion
+					) {
 						details(
 							"Incompatible Kotlin plugin found - Kord Extensions version " +
 								"${kordExGradle.component.version} expects Kotlin plugin version $wantedVersion"

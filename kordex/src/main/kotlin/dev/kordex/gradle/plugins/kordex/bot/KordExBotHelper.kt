@@ -32,14 +32,21 @@ object KordExBotHelper {
 		val outputDir = target.layout.buildDirectory.dir("generated")
 		val outputFile = target.layout.buildDirectory.file("generated/kordex.properties")
 
-		val task = target.tasks.create("generateMetadata") {
+		val task = target.tasks.register("generateMetadata") {
 			group = "generation"
 			description = "Generate KordEx metadata."
+
+			val botVersion = if (extension.bot.version.isPresent) {
+				extension.bot.version.get()
+			} else {
+				target.version.toString()
+			}
 
 			inputs.property("settings.dataCollection", extension.bot.dataCollection)
 			inputs.property("modules", extension.modules)
 			inputs.property("versions.kordEx", versions.kordEx.version)
 			inputs.property("versions.kord", versions.kord?.version)
+			inputs.property("versions.bot", botVersion)
 
 			outputs.file(outputFile)
 
@@ -54,6 +61,7 @@ object KordExBotHelper {
 				properties.setProperty("modules", extension.modules.get().joinToString())
 				properties.setProperty("versions.kordEx", versions.kordEx.version)
 				properties.setProperty("versions.kord", versions.kord?.version)
+				properties.setProperty("versions.bot", botVersion)
 
 				properties.store(outputFile.get().asFile.writer(), null)
 			}

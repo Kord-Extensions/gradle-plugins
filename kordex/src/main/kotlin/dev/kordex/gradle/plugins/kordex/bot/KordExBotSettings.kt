@@ -27,6 +27,9 @@ class KordExBotSettings(props: PropertyFactory) {
 		.boolean()
 		.convention(true)
 
+	val version: Property<String> = props
+		.single()
+
 	val voice: Property<Boolean> = props
 		.boolean()
 		.convention(true)

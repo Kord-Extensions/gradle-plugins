@@ -42,7 +42,7 @@ object I18nHelper {
 		val outputDirectory = extension.outputDirectory.orNull
 			?: target.layout.buildDirectory.file("generated/kordex/main/kotlin/").get().asFile
 
-		val generateTask = target.tasks.create("generateTranslationsClass") {
+		val generateTask = target.tasks.register("generateTranslationsClass") {
 			group = "generation"
 			description = "Generate classes containing translation keys."
 
