@@ -39,7 +39,11 @@ val v2tov1 = v1to2.entries.associate { (k, v) -> v to k }
 
 val logger: Logger = LoggerFactory.getLogger("kordex.modules")
 
-fun List<String>.normalizeModules(kordExVersion: Version, reporter: ProblemReporter, log: Boolean = true): List<String> {
+fun List<String>.normalizeModules(
+	kordExVersion: Version,
+	reporter: ProblemReporter,
+	log: Boolean = true
+): List<String> {
 	val problems = mutableListOf<Problem>()
 
 	val result = if (kordExVersion.isKX2) {
