@@ -18,6 +18,40 @@ import org.gradle.api.provider.Provider
 // kotlin-gradle-plugin-2.0.20-Beta1-gradle85.jar
 private val kotlinJarRegex = "kotlin-gradle-plugin-(.+)-gradle\\d+\\.jar".toRegex()
 
+fun Project.getKotlinPluginVersion(): String? {
+	val kotlinPlugin = pluginManager.findPlugin("org.jetbrains.kotlin.jvm")
+
+	if (kotlinPlugin == null) {
+		logger.warn("WARNING: Unable to find the Kotlin JVM plugin. Is it applied?")
+
+		return null
+	}
+
+	val classpathJars = plugins.toList()
+		.map { it::class.java.protectionDomain.codeSource.location }
+		.map { it.path.split("/").last() }
+
+	val kotlinJarName = classpathJars
+		.firstOrNull {
+			kotlinJarRegex.matches(it)
+		}
+
+	if (kotlinJarName == null) {
+		logger.warn(
+			"WARNING: Kotlin JVM plugin applied, but the JAR couldn't be found. " +
+				"Found ${classpathJars.size} JARs:"
+		)
+
+		classpathJars.forEach {
+			logger.warn("-> $it")
+		}
+
+		return null
+	}
+
+	return kotlinJarRegex.matchEntire(kotlinJarName)!!.groupValues[1]
+}
+
 @Suppress("UnstableApiUsage", "StringLiteralDuplication")
 @InternalAPI
 fun Project.checkTask(
@@ -25,6 +59,8 @@ fun Project.checkTask(
 	versionsProvider: Provider<VersionContainer>,
 	problemReporter: ProblemReporter
 ) {
+	val kotlinVersion = getKotlinPluginVersion()
+
 	val checkTask = tasks.register("checkKotlinVersion") {
 		group = "verification"
 		description = "Check whether the correct Kotlin plugin version is in use."
@@ -49,38 +85,7 @@ fun Project.checkTask(
 				error("Unable to figure out which Kotlin version is required. Please report this!")
 			}
 
-			val kotlinPlugin = pluginManager.findPlugin("org.jetbrains.kotlin.jvm")
-
-			if (kotlinPlugin == null) {
-				logger.warn("WARNING: Unable to find the Kotlin JVM plugin. Is it applied?")
-				return@doLast
-			}
-
-			val classpathJars = plugins.toList()
-				.map { it::class.java.protectionDomain.codeSource.location }
-				.map { it.path.split("/").last() }
-
-			val kotlinJarName = classpathJars
-				.firstOrNull {
-					kotlinJarRegex.matches(it)
-				}
-
-			if (kotlinJarName == null) {
-				logger.warn(
-					"WARNING: Kotlin JVM plugin applied, but the JAR couldn't be found. " +
-						"Found ${classpathJars.size} JARs:"
-				)
-
-				classpathJars.forEach {
-					logger.warn("-> $it")
-				}
-
-				return@doLast
-			}
-
-			val version = kotlinJarRegex.matchEntire(kotlinJarName)!!.groupValues[1]
-
-			if (!version.equals(wantedVersion, true)) {
+			if (!kotlinVersion.equals(wantedVersion, true)) {
 				if (extension.ignoreIncompatibleKotlinVersion.get()) {
 					problemReporter.report(ProblemIds.IncompatibleKotlinVersion) {
 						details(
@@ -93,7 +98,7 @@ fun Project.checkTask(
 					}
 				} else {
 					problemReporter.throwing(
-						RuntimeException("Incompatible Kotlin plugin version: $version"),
+						RuntimeException("Incompatible Kotlin plugin version: $kotlinVersion"),
 						ProblemIds.IncompatibleKotlinVersion
 					) {
 						details(

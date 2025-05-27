@@ -21,7 +21,7 @@ kordEx {
 	module("pluralkit")
 	module("func-mappings")
 
-	kordExVersion = "2.3.1-SNAPSHOT"
+	kordExVersion = "2.3.2-SNAPSHOT"
 	kordVersion = "latest"
 
 	bot {

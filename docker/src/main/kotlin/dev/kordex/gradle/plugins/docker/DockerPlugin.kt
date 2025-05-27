@@ -21,6 +21,10 @@ class DockerPlugin : Plugin<Project> {
 			group = "generation"
 			description = "Generate a Dockerfile, as configured."
 
+			notCompatibleWithConfigurationCache(
+				"Cache interferes with Dockerfile generation, and task is configured via extension properties."
+			)
+
 			// Should fix skipping generation, but probably better solved by checking inputs
 			// and moving to properties in the extension.
 			outputs.upToDateWhen { false }
