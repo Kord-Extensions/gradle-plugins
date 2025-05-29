@@ -1,14 +1,12 @@
 package template
 
-fun main() {
-	val devMode = System.getProperties().contains("devMode")
+import dev.kordex.core.ExtensibleBot
+import dev.kordex.core.utils.envOrNull
 
-	println("Main class!")
+suspend fun main() {
+	val bot = ExtensibleBot(envOrNull("TOKEN") ?: "FAKE") {
 
-	if (devMode) {
-		println("Dev mode!")
 	}
 
-	println("Env vars: " + System.getenv().keys.sorted().joinToString())
-	println("Overridden var: " + System.getenv("Z_OVERRIDDEN"))
+	bot.start()
 }
