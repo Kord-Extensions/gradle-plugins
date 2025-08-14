@@ -16,7 +16,7 @@ xmlutil = "0.86.3"
 
 [libraries]
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
-detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-librarie", version.ref = "detekt" }
+detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
 
 kx-ser = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kx-ser" }
 
