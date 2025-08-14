@@ -7,7 +7,6 @@
 package dev.kordex.gradle.plugins.docker.file.commands
 
 import dev.kordex.gradle.plugins.docker.file.DockerfileCommand
-import org.gradle.internal.impldep.org.apache.http.client.methods.RequestBuilder.options
 import java.io.Serializable
 
 @Suppress("StringLiteralDuplication")

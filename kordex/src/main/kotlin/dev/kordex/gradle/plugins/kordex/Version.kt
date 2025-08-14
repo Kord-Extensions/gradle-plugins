@@ -6,7 +6,7 @@
 
 package dev.kordex.gradle.plugins.kordex
 
-import dev.kordex.libs.com.unascribed.flexver.flexver.FlexVerComparator
+import com.unascribed.flexver.FlexVerComparator
 
 data class Version(val version: String) {
 	override fun toString(): String =

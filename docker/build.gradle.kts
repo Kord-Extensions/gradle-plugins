@@ -31,11 +31,10 @@ gradlePlugin {
 }
 
 dependencies {
-	compileOnly(kotlin("gradle-plugin", version = "2.0.20"))
+	compileOnly(kotlin("gradle-plugin", libs.versions.kotlin.gradle.plugin.get()))
 
-	detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
-	detektPlugins("io.gitlab.arturbosch.detekt:detekt-rules-libraries:1.23.6")
+	detektPlugins(libs.bundles.detekt.plugins)
 
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.6.3")
+	implementation(libs.kx.ser)
 }
 

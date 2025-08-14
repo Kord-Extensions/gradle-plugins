@@ -1,0 +1,48 @@
+[versions]
+detekt = "1.23.6"
+ktor = "2.3.12"
+kx-ser = "1.6.3"
+
+kotlin-gradle-plugin = "2.0.20"
+
+kordex-i18n = "1.0.6"
+
+flexver = "1.1.1"
+java-semver = "0.10.2"
+jcabi-manifests = "2.1.0"
+kotlinpoet = "1.18.1"
+kotlinpoet-dsl = "0.2"
+xmlutil = "0.86.3"
+
+[libraries]
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-librarie", version.ref = "detekt" }
+
+kx-ser = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kx-ser" }
+
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-ser = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
+
+kordex-i18n = { module = "dev.kordex.i18n:i18n-generator", version.ref = "kordex-i18n" }
+flexver = { module = "com.unascribed:flexver-java", version.ref = "flexver" }
+java-semver = { module = "com.github.zafarkhaja:java-semver", version.ref = "java-semver" }
+jcabi-manifests = { module = "com.jcabi:jcabi-manifests", version.ref = "jcabi-manifests" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+kotlinpoet-dsl = { module = "com.hanggrian:kotlinpoet-dsl", version.ref = "kotlinpoet-dsl" }
+xmlutil-core = { module = "io.github.pdvrieze.xmlutil:core-jvm", version.ref = "xmlutil" }
+xmlutil-ser = { module = "io.github.pdvrieze.xmlutil:serialization-jvm", version.ref = "xmlutil" }
+
+[bundles]
+detekt-plugins = [
+	"detekt-formatting",
+	"detekt-rules-libraries",
+]
+
+ktor-client = [
+	"ktor-client-cio",
+	"ktor-client-content-negotiation",
+	"ktor-client-core",
+	"ktor-ser"
+]

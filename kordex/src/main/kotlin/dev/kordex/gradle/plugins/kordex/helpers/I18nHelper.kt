@@ -66,7 +66,6 @@ object I18nHelper {
 						className = extension.className.get(),
 						classPackage = extension.classPackage.get(),
 						publicVisibility = extension.publicVisibility.get(),
-						splitToCamelCase = extension.camelCaseNames.get(),
 						messageFormatVersion = extension.messageFormatVersion.get(),
 					)
 
