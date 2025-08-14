@@ -5,6 +5,10 @@ on:
     branches:
       - "root"
 
+concurrency:
+  group: "gradle-plugins-${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 permissions:
   contents: write
   id-token: write
@@ -15,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -25,6 +31,14 @@ jobs:
 
       - name: Set up Kotlin
         uses: fwilhe2/setup-kotlin@main
+
+      - name: SonarQube (Cache)
+        uses: actions/cache@v4
+
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
       - name: Set up Gradle properties
 
@@ -40,9 +54,12 @@ jobs:
           dependency-graph: generate-and-submit
 
       - name: Gradle (Build)
-        run: "./gradlew checkLicenses build publishToMavenLocal"
+        run: "./gradlew checkLicenses build publishToMavenLocal sonar"
 
         env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
           ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
           ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSWORD }}"
 

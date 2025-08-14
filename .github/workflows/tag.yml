@@ -5,12 +5,19 @@ on:
     tags:
       - "v*"
 
+concurrency:
+  group: "gradle-plugins-${{ github.workflow }}"
+  cancel-in-progress: true
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: github.repository == 'Kord-Extensions/gradle-plugins'
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -36,7 +43,6 @@ jobs:
           global: true
           token: '${{ secrets.GITHUB_TOKEN }}'
 
-
       - name: Gradle (Setup)
         uses: gradle/actions/setup-gradle@v4
 
@@ -44,9 +50,12 @@ jobs:
           dependency-graph: generate-and-submit
 
       - name: Gradle (Build)
-        run: "./gradlew checkLicenses build publishToMavenLocal"
+        run: "./gradlew checkLicenses build publishToMavenLocal sonar"
 
         env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
           ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
           ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSWORD }}"
 

@@ -8,12 +8,18 @@ on:
   pull_request:
   merge_group:
 
+concurrency:
+  group: "gradle-plugins-${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -27,13 +33,24 @@ jobs:
           mkdir -p ~/.gradle
           echo "org.gradle.jvmargs=-XX:MaxMetaspaceSize=5G" >> ~/.gradle/gradle.properties
 
+      - name: SonarQube (Cache)
+        uses: actions/cache@v4
+
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - name: Gradle (Setup)
         uses: gradle/actions/setup-gradle@v4
 
       - name: Gradle (Build)
-        run: "./gradlew checkLicenses build publishToMavenLocal"
+        run: "./gradlew checkLicenses build publishToMavenLocal sonar"
 
         env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
           NO_SIGNING: "true"
           TOKEN: "${{ secrets.TOKEN }}"
 
