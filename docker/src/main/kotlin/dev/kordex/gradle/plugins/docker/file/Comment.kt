@@ -12,6 +12,5 @@ class Comment(val text: String) : DockerfileCommand() {
 	override fun toString(): String =
 		text.replace("\r\n", "\n")
 			.split("\n")
-			.map { "$keyword $it" }
-			.joinToString("\n")
+			.joinToString("\n") { "$keyword $it" }
 }
