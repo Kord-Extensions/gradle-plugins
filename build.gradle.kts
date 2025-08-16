@@ -1,4 +1,5 @@
 plugins {
+	id("org.jetbrains.kotlinx.kover")
 	id("org.sonarqube")
 }
 

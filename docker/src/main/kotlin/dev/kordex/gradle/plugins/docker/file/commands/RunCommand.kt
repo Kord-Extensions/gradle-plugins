@@ -70,17 +70,17 @@ abstract class RunCommand : DockerfileCommand() {
 			append("$keyword ")
 
 			if (mount != null) {
-				append("--mount=$mount \\\n    ")
+				append("--mount=$mount \\\n\t")
 			}
 
 			if (options.isNotEmpty()) {
 				append(
-					options.joinToString(" \\\n    ") {
+					options.joinToString(" \\\n\t") {
 						"${it.string}=${it.argument}"
 					}
 				)
 
-				append("\\\n    ")
+				append(" \\\n\t")
 			}
 
 			append("[ ")
@@ -102,17 +102,17 @@ abstract class RunCommand : DockerfileCommand() {
 			append("$keyword ")
 
 			if (mount != null) {
-				append("--mount=$mount \\\n    ")
+				append("--mount=$mount \\\n\t")
 			}
 
 			if (options.isNotEmpty()) {
 				append(
-					options.joinToString(" \\\n    ") {
+					options.joinToString(" \\\n\t") {
 						"${it.string}=${it.argument}"
 					}
 				)
 
-				append("\\\n    ")
+				append(" \\\n\t")
 			}
 
 			val trimmedCommand = command.trim()
@@ -212,12 +212,12 @@ abstract class RunCommand : DockerfileCommand() {
 		class Secret : MountBuilder() {
 			override val type: String = "secret"
 
-			var gid: String = "0"
+			var gid: Int = 0
 			var id: String? = null
 			var mode: String = "0400"
 			var required: Boolean = false
 			var target: String? = null
-			var uid: String = "0"
+			var uid: Int = 0
 
 			override fun toString(): String = buildString {
 				append("type=$type,")
@@ -245,11 +245,11 @@ abstract class RunCommand : DockerfileCommand() {
 
 			lateinit var target: String
 
-			var gid: String = "0"
+			var gid: Int = 0
 			var id: String? = null
 			var mode: String = "0600"
 			var required: Boolean = false
-			var uid: String = "0"
+			var uid: Int = 0
 
 			override fun toString(): String = buildString {
 				append("type=$type,")

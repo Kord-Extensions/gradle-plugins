@@ -15,16 +15,14 @@ kotlinpoet-dsl = "0.2"
 xmlutil = "0.86.3"
 
 [libraries]
-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
-detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
-
 kx-ser = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kx-ser" }
-
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-ser = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
 
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
 kordex-i18n = { module = "dev.kordex.i18n:i18n-generator", version.ref = "kordex-i18n" }
 flexver = { module = "com.unascribed:flexver-java", version.ref = "flexver" }
 java-semver = { module = "com.github.zafarkhaja:java-semver", version.ref = "java-semver" }

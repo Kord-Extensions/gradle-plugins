@@ -1,6 +1,8 @@
 plugins {
 	`kotlin-dsl`
 	plugin
+	`tested-plugin`
+
 	val env = System.getenv()
 
 	if (env.contains("GITHUB_ACTIONS") && !env.contains("NO_SIGNING")) {
