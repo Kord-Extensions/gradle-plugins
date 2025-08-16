@@ -31,6 +31,18 @@ sonar {
 	}
 }
 
+repositories {
+	// This is here because Kover will fail to build in CI otherwise.
+
+	google()
+	mavenCentral()
+
+	maven {
+		name = "Kord Snapshots"
+		url = uri("https://repo.kord.dev/snapshots")
+	}
+}
+
 subprojects {
 	this.group = "dev.kordex.gradle.plugins"
 	this.version = projectVersion
