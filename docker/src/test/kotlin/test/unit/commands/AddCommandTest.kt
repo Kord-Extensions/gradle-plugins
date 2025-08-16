@@ -44,7 +44,7 @@ class AddCommandTest {
 			"target"
 		)
 
-		command.option(AddCommand.Option.KeepGitDir)
+		command.option(AddCommand.Option.KeepGitDir())
 		command.option(AddCommand.Option.Checksum("test"))
 		command.option(AddCommand.Option.Chmod(777))
 		command.option(AddCommand.Option.Chown("user", "group"))

@@ -48,12 +48,11 @@ class AddCommand(
 	}
 
 	sealed class Option<T>(val string: String, val argument: T) : Serializable {
-		object KeepGitDir : Option<Boolean>("--keep-git-dir", true)
-
 		class Checksum(checksum: String) : Option<String>("--checksum", checksum)
 		class Chmod(perms: Int) : Option<Int>("--chmod", perms)
 		class Chown(user: String, group: String) : Option<String>("--chown", "$user:$group")
 		class Exclude(path: String) : Option<String>("--exclude", path)
+		class KeepGitDir : Option<Boolean>("--keep-git-dir", true)
 		class Link : Option<Boolean>("--link", true)
 
 		companion object {
