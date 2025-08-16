@@ -41,4 +41,9 @@ class EntrypointCommandTest {
 			"Command output should match in full"
 		}
 	}
+
+	@Test
+	fun testOther() {
+		EntrypointCommand.toString()
+	}
 }

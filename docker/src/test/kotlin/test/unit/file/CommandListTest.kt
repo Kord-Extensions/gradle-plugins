@@ -21,6 +21,9 @@ class CommandListTest {
 	fun testExtensionFunctions() {
 		val commands: CommandList = mutableListOf()
 
+		commands.add(arrayOf(""), "")
+		commands.lastIs<AddCommand>()
+
 		commands.add(arrayOf(""), "") { }
 		commands.lastIs<AddCommand>()
 
@@ -36,7 +39,13 @@ class CommandListTest {
 		commands.comment("")
 		commands.lastIs<Comment>()
 
+		commands.copy("", "")
+		commands.lastIs<CopyCommand>()
+
 		commands.copy("", "") { }
+		commands.lastIs<CopyCommand>()
+
+		commands.copy(arrayOf(""), "")
 		commands.lastIs<CopyCommand>()
 
 		commands.copy(arrayOf(""), "") { }
@@ -75,6 +84,9 @@ class CommandListTest {
 		commands.onBuild { cmdShell("") }
 		commands.lastIs<OnBuildCommand>()
 
+		commands.runExec("")
+		commands.lastIs<RunCommand.Exec>()
+
 		commands.runExec("") { }
 		commands.lastIs<RunCommand.Exec>()
 
@@ -96,7 +108,7 @@ class CommandListTest {
 		commands.workdir("")
 		commands.lastIs<WorkdirCommand>()
 
-		assert(commands.size == 25) {
+		assert(commands.size == 29) {
 			"Command list should contain 27 items"
 		}
 	}

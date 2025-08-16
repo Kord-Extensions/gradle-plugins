@@ -19,7 +19,7 @@ const val KOTLIN_VERSION = "2.1.21"
 val SETTINGS_GRADLE = """
 pluginManagement {
 	plugins {
-		kotlin("jvm") version $KOTLIN_VERSION
+		kotlin("jvm") version "$KOTLIN_VERSION"
 
 		id("dev.kordex.gradle.docker")
 	}

@@ -10,6 +10,7 @@ import dev.kordex.gradle.plugins.docker.file.commands.CmdCommand
 import dev.kordex.gradle.plugins.docker.file.commands.CopyCommand
 import dev.kordex.gradle.plugins.docker.file.commands.FromCommand
 import dev.kordex.gradle.plugins.docker.file.commands.OnBuildCommand
+import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -36,13 +37,18 @@ class OnBuildCommandTest {
 	@Test
 	fun testErrors() {
 		val copyCommand = CopyCommand(arrayOf("test"), "test")
+		val copyCommandFrom = CopyCommand(arrayOf("test"), "test")
 		val fromCommand = FromCommand("test")
 		val onBuildCommand = OnBuildCommand(CmdCommand.Shell("test"))
 
-		copyCommand.option(CopyCommand.Option.From("test"))
+		copyCommandFrom.option(CopyCommand.Option.From("test"))
+
+		assertDoesNotThrow("Command should not throw when passed a `CopyCommand` without --from") {
+			OnBuildCommand(copyCommand).toString()
+		}
 
 		assertFailsWith<IllegalStateException>("Command should throw when passed a `CopyCommand` with --from") {
-			OnBuildCommand(copyCommand).toString()
+			OnBuildCommand(copyCommandFrom).toString()
 		}
 
 		assertFailsWith<IllegalStateException>("Command should throw when passed a `FromCommand`") {

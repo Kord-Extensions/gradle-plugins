@@ -35,13 +35,19 @@ class HealthcheckCommandTest {
 
 		command.cmdShell("test")
 
-		val output = command.toString()
-
-		assert(output.startsWith("HEALTHCHECK ")) {
+		assert(command.toString().startsWith("HEALTHCHECK ")) {
 			"Command output should start with `HEALTHCHECK `"
 		}
 
-		assert(output == "HEALTHCHECK CMD test") {
+		assert(command.toString() == "HEALTHCHECK CMD test") {
+			"Command output should match in full"
+		}
+
+		// HEALTHCHECK CMD [ "test" ]
+
+		command.cmdExec("test")
+
+		assert(command.toString() == "HEALTHCHECK CMD [ \"test\" ]") {
 			"Command output should match in full"
 		}
 	}
