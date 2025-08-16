@@ -54,7 +54,7 @@ jobs:
           dependency-graph: generate-and-submit
 
       - name: Gradle (Build)
-        run: "./gradlew checkLicenses build publishToMavenLocal koverXmlReport sonar"
+        run: "./gradlew checkLicenses build koverXmlReport publishToMavenLocal sonar"
 
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
