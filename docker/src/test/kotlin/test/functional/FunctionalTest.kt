@@ -6,6 +6,7 @@
 
 package test.functional
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -18,7 +19,7 @@ const val KOTLIN_VERSION = "2.1.21"
 val SETTINGS_GRADLE = """
 pluginManagement {
 	plugins {
-		kotlin("jvm") version "2.1.21"
+		kotlin("jvm") version $KOTLIN_VERSION
 
 		id("dev.kordex.gradle.docker")
 	}
@@ -84,7 +85,7 @@ class FunctionalTest {
 		get() =
 			testProjectDir.resolve("Dockerfile")
 
-	fun runGradleTask(task: String) =
+	fun runGradleTask(task: String): BuildResult =
 		GradleRunner.create()
 			.withProjectDir(testProjectDir)
 			.withArguments(task)
