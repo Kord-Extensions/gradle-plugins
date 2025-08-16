@@ -200,6 +200,20 @@ class RunCommandTest {
 		) {
 			"Command output should match in full"
 		}
+
+		command.bindMount {
+			from = "from"
+			target = "target"
+		}
+
+		assert(
+			command.toString() ==
+				"RUN --mount=type=bind,from=from,target=target,source=from " +
+				"\\\n\t" +
+				"one two"
+		) {
+			"Command output should match in full"
+		}
 	}
 
 	@Test
@@ -229,6 +243,26 @@ class RunCommandTest {
 		assert(
 			command.toString() ==
 				"RUN --mount=type=cache,id=id,target=target,sharing=private,from=from,source=source,mode=0777,uid=1000,gid=1000 " +
+				"\\\n\t" +
+				"one two"
+		) {
+			"Command output should match in full"
+		}
+
+		command.cacheMount {
+			from = "from"
+			target = "target"
+
+			gid = 1000
+			mode = "0777"
+			readOnly = true
+			sharing = RunCommand.MountBuilder.Cache.Sharing.Locked
+			uid = 1000
+		}
+
+		assert(
+			command.toString() ==
+				"RUN --mount=type=cache,id=target,target=target,ro=true,sharing=locked,from=from,mode=0777,uid=1000,gid=1000 " +
 				"\\\n\t" +
 				"one two"
 		) {
@@ -290,6 +324,21 @@ class RunCommandTest {
 		) {
 			"Command output should match in full"
 		}
+
+		command.secretMount {
+			gid = 1000
+			mode = "0420"
+			uid = 1000
+		}
+
+		assert(
+			command.toString() ==
+				"RUN --mount=type=secret,mode=0420,uid=1000,gid=1000 " +
+				"\\\n\t" +
+				"one two"
+		) {
+			"Command output should match in full"
+		}
 	}
 
 	@Test
@@ -321,6 +370,24 @@ class RunCommandTest {
 		) {
 			"Command output should match in full"
 		}
+
+		command.sshMount {
+			target = "target"
+
+			gid = 1000
+			id = "id"
+			mode = "0620"
+			uid = 1000
+		}
+
+		assert(
+			command.toString() ==
+				"RUN --mount=type=ssh,id=id,target=target,mode=0620,uid=1000,gid=1000 " +
+				"\\\n\t" +
+				"one two"
+		) {
+			"Command output should match in full"
+		}
 	}
 
 	@Test
@@ -328,12 +395,9 @@ class RunCommandTest {
 		// RUN --mount=type=cache,id=id,target=target,sharing=private,from=from,source=source,mode=0777,uid=1000,gid=1000
 		//     --network=default
 		//     --security=sandbox
-		//     <<EOF
-		// one
-		// two
-		// EOF
+		//     [ "one", "two" ]
 
-		val command = RunCommand.Shell("  one\ntwo  ")
+		val command = RunCommand.Exec(arrayOf("one", "two"))
 
 		command.networkType(RunCommand.NetworkType.Default)
 		command.securityType(RunCommand.SecurityType.Sandbox)
@@ -363,9 +427,7 @@ class RunCommandTest {
 				"\\\n\t" +
 				"--security=sandbox " +
 				"\\\n\t" +
-				"<<EOF\n" +
-				"one\ntwo\n" +
-				"EOF\n"
+				"[ \"one\", \"two\" ]"
 		) {
 			"Command output should match in full"
 		}
