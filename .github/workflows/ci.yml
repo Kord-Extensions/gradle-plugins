@@ -45,14 +45,18 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Gradle (Build)
-        run: "./gradlew checkLicenses build koverXmlReport publishToMavenLocal sonar"
+        run: "./gradlew checkLicenses build koverXmlReport publishToMavenLocal"
+
+        env:
+          NO_SIGNING: "true"
+          TOKEN: "${{ secrets.TOKEN }}"
+
+      - name: Gradle (Sonar)
+        run: "./gradlew sonar"
 
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-          NO_SIGNING: "true"
-          TOKEN: "${{ secrets.TOKEN }}"
 
       - name: Gradle (Test)
         run: "./gradlew build --info --stacktrace"

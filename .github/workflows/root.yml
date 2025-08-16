@@ -54,12 +54,9 @@ jobs:
           dependency-graph: generate-and-submit
 
       - name: Gradle (Build)
-        run: "./gradlew checkLicenses build koverXmlReport publishToMavenLocal sonar"
+        run: "./gradlew checkLicenses build koverXmlReport publishToMavenLocal"
 
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
           ORG_GRADLE_PROJECT_signingKey: "${{ secrets.GPG_KEY }}"
           ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.GPG_PASSWORD }}"
 
@@ -67,6 +64,13 @@ jobs:
           GRADLE_PUBLISH_SECRET: "${{ secrets.GRADLE_PUBLISH_SECRET }}"
 
           TOKEN: "${{ secrets.TOKEN }}"
+
+      - name: Gradle (Sonar)
+        run: "./gradlew sonar"
+
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Gradle (Test)
         run: "./gradlew build --info --stacktrace"
