@@ -1,6 +1,6 @@
 [versions]
 detekt = "1.23.6"
-ktor = "2.3.12"
+ktor = "3.2.3"
 kx-ser = "1.6.3"
 
 kotlin-gradle-plugin = "2.0.20"
