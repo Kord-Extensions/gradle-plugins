@@ -166,9 +166,15 @@ class KordExPlugin @Inject constructor(
 		target.repositories.google()
 		target.repositories.mavenCentral()
 
+		// Reposilite: Resolves and stores mirrored repos.
+		target.repo(KORDEX_RELEASES_REPOSILITE)
+		target.repo(KORDEX_SNAPSHOTS_REPOSILITE)
+		target.repo(KORDEX_MIRROR_REPOSILITE)
+
+		// Cloudflare R2 domains: Useful when Reposilite is down.
 		target.repo(KORDEX_RELEASES)
 		target.repo(KORDEX_SNAPSHOTS)
-		target.repo(KORD_SNAPSHOTS)
+		target.repo(KORDEX_MIRROR)
 
 		val modules = extension.modules.get().normalizeModules(kordExVersion, problems.reporter, log = false)
 
