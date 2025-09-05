@@ -166,24 +166,40 @@ class KordExPlugin @Inject constructor(
 		target.repositories.google()
 		target.repositories.mavenCentral()
 
-		// Reposilite: Resolves and stores mirrored repos.
-		target.repo(KORDEX_RELEASES_REPOSILITE)
-		target.repo(KORDEX_SNAPSHOTS_REPOSILITE)
-		target.repo(KORDEX_MIRROR_REPOSILITE)
+		target.repo("KordEx (Releases, R2)", KORDEX_RELEASES) {
+			content {
+				includeGroupAndSubgroups("com.kotlindiscord")
+				includeGroupAndSubgroups("dev.kordex")
+			}
+		}
 
-		// Cloudflare R2 domains: Useful when Reposilite is down.
-		target.repo(KORDEX_RELEASES)
-		target.repo(KORDEX_SNAPSHOTS)
-		target.repo(KORDEX_MIRROR)
+		target.repo("KordEx (Snapshots, R2)", KORDEX_SNAPSHOTS) {
+			content {
+				includeGroupAndSubgroups("com.kotlindiscord")
+				includeGroupAndSubgroups("dev.kordex")
+			}
+		}
+
+		target.repo("KordEx (Mirror, Reposilite)", KORDEX_MIRROR_REPOSILITE) {
+			content {
+				includeGroupAndSubgroups("dev.kord")
+			}
+		}
+
+		target.repo("KordEx (Mirror, R2)", KORDEX_MIRROR) {
+			content {
+				includeGroupAndSubgroups("dev.kord")
+			}
+		}
 
 		val modules = extension.modules.get().normalizeModules(kordExVersion, problems.reporter, log = false)
 
 		if (MAPPINGS_V1 in modules || MAPPINGS_V2 in modules) {
-			target.repo("https://maven.fabricmc.net")
-			target.repo("https://maven.quiltmc.org/repository/release")
-			target.repo("https://maven.quiltmc.org/repository/snapshot")
-			target.repo("https://maven.shedaniel.me")
-			target.repo("https://jitpack.io")
+			target.repo("FabricMC", "https://maven.fabricmc.net")
+			target.repo("QuiltMC (Releases)", "https://maven.quiltmc.org/repository/release")
+			target.repo("QuiltMC (Snapshots)", "https://maven.quiltmc.org/repository/snapshot")
+			target.repo("Shedaniel", "https://maven.shedaniel.me")
+			target.repo("Jitpack", "https://jitpack.io")
 		}
 	}
 
