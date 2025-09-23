@@ -192,6 +192,11 @@ class KordExPlugin @Inject constructor(
 			}
 		}
 
+		if (extension.addThirdPartyRepositories.get()) {
+			target.repo("KordEx (Third-Party, Releases)", KORDEX_EXTERNAL_RELEASES)
+			target.repo("KordEx (Third-Party, Snapshots)", KORDEX_EXTERNAL_SNAPSHOTS)
+		}
+
 		val modules = extension.modules.get().normalizeModules(kordExVersion, problems.reporter, log = false)
 
 		if (MAPPINGS_V1 in modules || MAPPINGS_V2 in modules) {

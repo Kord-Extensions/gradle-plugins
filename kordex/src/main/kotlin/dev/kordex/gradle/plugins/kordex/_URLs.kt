@@ -12,6 +12,9 @@ const val KORDEX_RELEASES = "https://releases-repo.kordex.dev"
 const val KORDEX_SNAPSHOTS = "https://snapshots-repo.kordex.dev"
 const val KORDEX_MIRROR = "https://mirror-repo.kordex.dev"
 
+const val KORDEX_EXTERNAL_RELEASES = "https://releases-repo-external.kordex.dev"
+const val KORDEX_EXTERNAL_SNAPSHOTS = "https://snapshots-repo-external.kordex.dev"
+
 const val KORDEX_RELEASES_REPOSILITE = "https://repo.kordex.dev/releases"
 const val KORDEX_SNAPSHOTS_REPOSILITE = "https://repo.kordex.dev/snapshots"
 const val KORDEX_MIRROR_REPOSILITE = "https://repo.kordex.dev/mirror"
