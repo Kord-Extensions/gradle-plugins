@@ -77,7 +77,7 @@ jobs:
         working-directory: "./testModule"
 
       - name: Upload plugin JARs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
 
         with:
           name: Plugin JARs
