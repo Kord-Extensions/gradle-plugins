@@ -1,10 +1,10 @@
 pluginManagement {
 	plugins {
-		val pluginVersion = "1.7.4"
+		val pluginVersion = "1.8.0"
 
 		kotlin("jvm") version "2.2.20"
 
-		id("com.google.devtools.ksp") version "2.2.20-2.0.3"
+		id("com.google.devtools.ksp") version "2.3.3"
 		id("dev.kordex.gradle.docker") version pluginVersion
 		id("dev.kordex.gradle.kordex") version pluginVersion
 	}
@@ -22,11 +22,11 @@ pluginManagement {
 
 buildscript {
     repositories {
+	    mavenLocal()
+
         google()
         gradlePluginPortal()
         mavenCentral()
-
-        mavenLocal()
     }
 }
 

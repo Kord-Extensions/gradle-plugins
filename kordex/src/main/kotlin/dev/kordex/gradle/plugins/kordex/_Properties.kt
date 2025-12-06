@@ -11,11 +11,11 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 @InternalAPI
-inline fun <reified T> PropertyFactory.single(): Property<T> =
+inline fun <reified T : Any> PropertyFactory.single(): Property<T> =
 	property(T::class.java)
 
 @InternalAPI
-inline fun <reified T> PropertyFactory.list(): ListProperty<T> =
+inline fun <reified T : Any> PropertyFactory.list(): ListProperty<T> =
 	listProperty(T::class.java)
 
 @InternalAPI
@@ -31,5 +31,5 @@ fun PropertyFactory.booleanList(): ListProperty<Boolean> =
 	listProperty(Boolean::class.javaObjectType)
 
 @InternalAPI
-inline fun <reified T> PropertyFactory.single(default: T): Property<T> =
+inline fun <reified T : Any> PropertyFactory.single(default: T): Property<T> =
 	property(T::class.java).convention(default)

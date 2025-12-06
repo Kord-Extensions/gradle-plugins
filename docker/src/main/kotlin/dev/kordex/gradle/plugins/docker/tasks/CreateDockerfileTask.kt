@@ -8,14 +8,12 @@ package dev.kordex.gradle.plugins.docker.tasks
 
 import dev.kordex.gradle.plugins.docker.Dockerfile
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import kotlin.io.writeText
 
-@CacheableTask
 abstract class CreateDockerfileTask : DefaultTask() {
 	@get:OutputFile
 	lateinit var file: File

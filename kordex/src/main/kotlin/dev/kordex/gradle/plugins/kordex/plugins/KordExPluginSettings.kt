@@ -48,10 +48,10 @@ class KordExPluginSettings(props: PropertyFactory) {
 		)
 	}
 
-	fun kordExVersion(spec: String) {
+	fun kordExVersion(versionSpecifier: String) {
 		// Try to parse the expression as pf4j does, to check validity.
-		ExpressionParser.newInstance().parse(spec)
+		ExpressionParser.newInstance().parse(versionSpecifier)
 
-		kordExVersionSpecifier.set(spec)
+		kordExVersionSpecifier.set(versionSpecifier)
 	}
 }

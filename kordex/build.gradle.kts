@@ -53,7 +53,3 @@ dependencies {
 		exclude("io.github.pdvrieze.xmlutil", "core")
 	}
 }
-
-license {
-	exclude("dev/kordex/libs/com/unascribed/flexver/flexver/FlexVerComparator.java")
-}

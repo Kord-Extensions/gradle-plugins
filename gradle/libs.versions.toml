@@ -1,7 +1,7 @@
 [versions]
-detekt = "1.23.6"
-ktor = "2.3.12"
-kx-ser = "1.6.3"
+detekt = "1.23.8"
+ktor = "3.3.0"
+kx-ser = "1.7.3"
 
 kotlin-gradle-plugin = "2.0.20"
 
@@ -10,7 +10,7 @@ kordex-i18n = "1.0.6"
 flexver = "1.1.1"
 java-semver = "0.10.2"
 jcabi-manifests = "2.1.0"
-kotlinpoet = "1.18.1"
+kotlinpoet = "2.2.0"
 kotlinpoet-dsl = "0.2"
 xmlutil = "0.86.3"
 
