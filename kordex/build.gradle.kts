@@ -19,7 +19,7 @@ repositories {
 }
 
 gradlePlugin {
-	website = "https://docs.kordex.dev/kordex-plugin.html"
+	website = "https://docs.kordex.dev/bots/gradle-plugin"
 	vcsUrl = "https://github.com/Kord-Extensions/gradle-plugins"
 
 	plugins {
