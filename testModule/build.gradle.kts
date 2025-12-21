@@ -25,18 +25,11 @@ kordEx {
 	module("pluralkit")
 	module("func-mappings")
 
-	kordExVersion = "2.3.6-SNAPSHOT"
+	kordExVersion = "2.4.0-SNAPSHOT"
 	kordVersion = "latest"
 
 	bot {
 		mainClass = "template.MainKt"
-	}
-
-	i18n {
-		classPackage = "template.i18n"
-		translationBundle = "template.strings"
-		publicVisibility = false
-		messageFormatVersion = 2
 	}
 }
 

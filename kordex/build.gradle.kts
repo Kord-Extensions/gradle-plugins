@@ -43,7 +43,6 @@ dependencies {
 	implementation(libs.flexver)
 	implementation(libs.java.semver)
 	implementation(libs.jcabi.manifests)
-	implementation(libs.kordex.i18n)
 	implementation(libs.kotlinpoet)
 	implementation(libs.kotlinpoet.dsl)
 	implementation(libs.kx.ser)

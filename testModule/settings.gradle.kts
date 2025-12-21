@@ -1,6 +1,6 @@
 pluginManagement {
 	plugins {
-		val pluginVersion = "1.8.0"
+		val pluginVersion = "1.9.0"
 
 		kotlin("jvm") version "2.2.20"
 

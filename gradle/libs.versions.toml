@@ -23,7 +23,6 @@ ktor-ser = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref
 
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
-kordex-i18n = { module = "dev.kordex.i18n:i18n-generator", version.ref = "kordex-i18n" }
 flexver = { module = "com.unascribed:flexver-java", version.ref = "flexver" }
 java-semver = { module = "com.github.zafarkhaja:java-semver", version.ref = "java-semver" }
 jcabi-manifests = { module = "com.jcabi:jcabi-manifests", version.ref = "jcabi-manifests" }

@@ -18,7 +18,6 @@ import dev.kordex.gradle.plugins.kordex.functions.checkTask
 import dev.kordex.gradle.plugins.kordex.functions.configurationsProvider
 import dev.kordex.gradle.plugins.kordex.functions.packageProvider
 import dev.kordex.gradle.plugins.kordex.functions.versionsProvider
-import dev.kordex.gradle.plugins.kordex.helpers.I18nHelper
 import dev.kordex.gradle.plugins.kordex.helpers.KspPluginHelper
 import dev.kordex.gradle.plugins.kordex.plugins.KordExPluginHelper
 import dev.kordex.gradle.plugins.kordex.resolvers.gradle.GradleMetadata
@@ -133,17 +132,6 @@ class KordExPlugin @Inject constructor(
 
 			if (extension.hasBot) {
 				KordExBotHelper.process(target, extension, versions)
-			}
-
-			if (extension.hasI18n) {
-				if (Version(versions.kordEx.version.replace("-SNAPSHOT", "")) < "2.3.0") {
-					error(
-						"The `i18n` builder is only applicable to Kord Extensions version 2.3.0 and later. " +
-							"Current version: ${versions.kordEx}"
-					)
-				}
-
-				I18nHelper.apply(target, extension.i18n)
 			}
 
 			if (extension.hasPlugin) {

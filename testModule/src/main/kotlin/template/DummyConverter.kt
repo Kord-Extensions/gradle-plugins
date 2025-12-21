@@ -8,7 +8,7 @@ import dev.kordex.core.commands.CommandContext
 import dev.kordex.core.commands.OptionWrapper
 import dev.kordex.core.commands.converters.SingleConverter
 import dev.kordex.core.commands.converters.Validator
-import dev.kordex.core.i18n.types.Key
+import dev.kordex.i18n.Key
 import dev.kordex.parser.StringParser
 
 @Converter(
