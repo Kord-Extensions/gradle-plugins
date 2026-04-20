@@ -1,6 +1,8 @@
+import org.gradle.kotlin.dsl.kotlin
+
 pluginManagement {
 	plugins {
-		val pluginVersion = "1.9.0"
+		val pluginVersion = "1.9.2"
 
 		kotlin("jvm") version "2.2.20"
 

@@ -11,9 +11,11 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import java.io.File
 import kotlin.io.writeText
 
+@DisableCachingByDefault
 abstract class CreateDockerfileTask : DefaultTask() {
 	@get:OutputFile
 	lateinit var file: File
